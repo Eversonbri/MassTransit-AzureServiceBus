@@ -21,9 +21,9 @@ namespace MassTransit.Transports.AzureServiceBus.Tests.Framework
 		private static readonly AccountDetails _details = new AccountDetails();
 		public static readonly Uri ApplicationEndpoint = _details.BuildUri("my-application");
 
-		public static AzureServiceBusEndpointAddress GetAddress()
+		public static IAzureServiceBusEndpointAddress GetAddress()
 		{
-			return AzureServiceBusEndpointAddressImpl.Parse(ApplicationEndpoint);
+			return AzureServiceBusEndpointAddress.Parse(ApplicationEndpoint);
 		}
 
 		public static A AMessage()

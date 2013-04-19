@@ -85,7 +85,7 @@ type TopicDescription =
   /// Should be true in this transport.
   abstract member EnableBatchedOperations : bool with get
 
-type AzureServiceBusEndpointAddress =
+type IAzureServiceBusEndpointAddress =
   inherit IEndpointAddress
   inherit IDisposable
   [<NotNull>]
@@ -101,4 +101,4 @@ type AzureServiceBusEndpointAddress =
   [<CanBeNull>]
   abstract member TopicDescription : TopicDescription
   [<NotNull>]
-  abstract member ForTopic : string -> AzureServiceBusEndpointAddress
+  abstract member ForTopic : string -> IAzureServiceBusEndpointAddress

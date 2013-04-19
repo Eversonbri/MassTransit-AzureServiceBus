@@ -11,56 +11,57 @@
 // CONDITIONS OF ANY KIND, either express or implied. See the License for the 
 // specific language governing permissions and limitations under the License.
 
-using System;
-using System.Threading.Tasks;
-using MassTransit.Transports.AzureServiceBus.Receiver;
-using MassTransit.Logging;
-using MassTransit.Util;
-
 #pragma warning disable 1591
 
 namespace MassTransit.Transports.AzureServiceBus.Management
 {
-	/// <summary>
-	/// Handles queue connection purging.
-	/// </summary>
-	public class PurgeImpl
-		: AzureManagement
-	{
-		static readonly ILog _logger = Logger.Get(typeof (PurgeImpl));
+    using System;
+    using System.Threading.Tasks;
+    using Logging;
+    using Receiver;
+    using Util;
 
-		readonly bool _purgeExistingMessages;
-		readonly AzureServiceBusEndpointAddress _address;
 
-		public PurgeImpl(bool purgeExistingMessages,
-			[NotNull] AzureServiceBusEndpointAddress address)
-		{
-			if (address == null)
-				throw new ArgumentNullException("address");
+    /// <summary>
+    /// Handles queue connection purging.
+    /// </summary>
+    public class PurgeImpl
+        : AzureManagement
+    {
+        static readonly ILog _logger = Logger.Get(typeof(PurgeImpl));
 
-			_purgeExistingMessages = purgeExistingMessages;
-			_address = address;
-		}
+        readonly IAzureServiceBusEndpointAddress _address;
+        readonly bool _purgeExistingMessages;
 
-		/// <summary>
-		/// Purges the queue/topic that this management is managing.
-		/// </summary>
-		internal Task Purge()
-		{
-			return _address.NamespaceManager.ToggleQueueAsync(_address.QueueDescription);
-		}
+        public PurgeImpl(bool purgeExistingMessages,
+            [NotNull] IAzureServiceBusEndpointAddress address)
+        {
+            if (address == null)
+                throw new ArgumentNullException("address");
 
-		public void Bind(ConnectionImpl connection)
-		{
-			if (!_purgeExistingMessages)
-				return;
-			
-			_logger.InfoFormat("purging queues for {0}", _address);
-			Purge().Wait();
-		}
+            _purgeExistingMessages = purgeExistingMessages;
+            _address = address;
+        }
 
-		public void Unbind(ConnectionImpl connection)
-		{
-		}
-	}
+        public void Bind(AzureServiceBusConnection connection)
+        {
+            if (!_purgeExistingMessages)
+                return;
+
+            _logger.InfoFormat("purging queues for {0}", _address);
+            Purge().Wait();
+        }
+
+        public void Unbind(AzureServiceBusConnection connection)
+        {
+        }
+
+        /// <summary>
+        /// Purges the queue/topic that this management is managing.
+        /// </summary>
+        internal Task Purge()
+        {
+            return _address.NamespaceManager.ToggleQueueAsync(_address.QueueDescription);
+        }
+    }
 }

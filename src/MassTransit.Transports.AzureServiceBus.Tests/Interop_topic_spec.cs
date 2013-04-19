@@ -10,7 +10,7 @@ namespace MassTransit.Transports.AzureServiceBus.Tests
 	public class Interop_topic_spec
 	{
 		NamespaceManager nm;
-		AzureMessageNameFormatter _formatter;
+		AzureServiceBusMessageNameFormatter _formatter;
 
 		[When]
 		public void theres_a_namespace_manager_available()
@@ -22,7 +22,7 @@ namespace MassTransit.Transports.AzureServiceBus.Tests
 		[Given]
 		public void a_message_name_formatter()
 		{
-			_formatter = new AzureMessageNameFormatter();
+			_formatter = new AzureServiceBusMessageNameFormatter();
 		}
 
 		[Then]

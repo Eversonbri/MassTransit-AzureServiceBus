@@ -8,7 +8,7 @@ namespace MassTransit.Transports.AzureServiceBus.Tests
 	[Scenario, Integration]
 	public class Azure_management_impl_spec
 	{
-		AzureServiceBusEndpointAddress address;
+		IAzureServiceBusEndpointAddress address;
 
 		[When]
 		public void management_purges_queue()

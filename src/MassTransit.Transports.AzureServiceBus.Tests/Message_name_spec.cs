@@ -7,12 +7,12 @@ namespace MassTransit.Transports.AzureServiceBus.Tests
 	[Scenario]
 	public class Message_name_spec
 	{
-		AzureMessageNameFormatter _f;
+		AzureServiceBusMessageNameFormatter _f;
 
 		[Given]
 		public void Message_Name_Formatter()
 		{
-			_f = new AzureMessageNameFormatter();
+			_f = new AzureServiceBusMessageNameFormatter();
 		}
 
 		[Then]

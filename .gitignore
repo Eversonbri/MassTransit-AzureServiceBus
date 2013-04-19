@@ -12,3 +12,5 @@ Profiles/
 ServiceConfiguration.Cloud.cscfg
 TestResult.xml
 SolutionVersion.cs
+NuGet.exe
+NuGet.exe.old

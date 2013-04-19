@@ -24,6 +24,7 @@ open System.Threading
 open System.Runtime.CompilerServices
 open System.Collections.Concurrent
 
+open MassTransit
 open MassTransit.Transports.AzureServiceBus
 open MassTransit.Transports.AzureServiceBus.Receiver.Queue
 open MassTransit.Async.AsyncRetry
@@ -387,7 +388,7 @@ type Receiver(desc   : QueueDescription,
 
 type ReceiverModule =
   /// <code>address</code> is required. <code>settings</code> is required.
-  static member StartReceiver(address  : AzureServiceBusEndpointAddress,
+  static member StartReceiver(address  : IAzureServiceBusEndpointAddress,
                               settings : ReceiverSettings) =
     let r = new Receiver(address.QueueDescription, (fun () -> address.MessagingFactoryFactory.Invoke()),
                                    address.NamespaceManager, settings)

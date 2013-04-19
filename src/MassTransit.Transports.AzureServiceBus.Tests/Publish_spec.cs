@@ -121,7 +121,7 @@ namespace MassTransit.Transports.AzureServiceBus.Tests
 	[TestFixture(typeof (MongolianRat))]
 	[Integration]
 	public class When_publishing_ordinary_interfaces<TMesg>
-		where TMesg : class
+        where TMesg : class, SpecialSwedishRat
 	{
 		Future<TMesg> _receivedAnyRat;
 
@@ -166,7 +166,7 @@ namespace MassTransit.Transports.AzureServiceBus.Tests
 		[Then]
 		public void sound_equals()
 		{
-			dynamic val = _receivedAnyRat.Value;
+			TMesg val = _receivedAnyRat.Value;
 			string sound = val.SoundsLike;
 			sound.ShouldBeEqualTo("peep");
 		}

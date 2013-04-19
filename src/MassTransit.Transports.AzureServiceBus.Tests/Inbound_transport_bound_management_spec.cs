@@ -23,7 +23,7 @@ namespace MassTransit.Transports.AzureServiceBus.Tests
 	[Scenario]
 	public class Inbound_transport_bound_management_spec
 	{
-		Mock<ConnectionHandler<ConnectionImpl>> handler;
+		Mock<ConnectionHandler<AzureServiceBusConnection>> handler;
 		Mock<AzureManagement> management;
 		IInboundTransport subject;
 
@@ -31,12 +31,12 @@ namespace MassTransit.Transports.AzureServiceBus.Tests
 		public void an_inbound_transport_with_purge_set()
 		{
 			management = new Mock<AzureManagement>();
-			handler = new Mock<ConnectionHandler<ConnectionImpl>>();
+			handler = new Mock<ConnectionHandler<AzureServiceBusConnection>>();
 			// mock up the actual work that connection handler does
 			handler.Setup(x => x.AddBinding(management.Object))
 				.Callback(() => management.Object.Bind(null));
 			
-			subject = new InboundTransportImpl(
+			subject = new AzureServiceBusInboundTransport(
 				TestDataFactory.GetAddress(),
 				handler.Object,
 				management.Object);
@@ -48,7 +48,7 @@ namespace MassTransit.Transports.AzureServiceBus.Tests
 		public void receive_is_called()
 		{
 			handler.Verify(
-				x => x.AddBinding(It.IsAny<ConnectionBinding<ConnectionImpl>>()),
+				x => x.AddBinding(It.IsAny<ConnectionBinding<AzureServiceBusConnection>>()),
 				Times.Never(),
 				"hasn't received yet");
 			
@@ -58,7 +58,7 @@ namespace MassTransit.Transports.AzureServiceBus.Tests
 		[Then]
 		public void should_have_called_add_binding_at_last_some_time()
 		{
-			handler.Verify(x => x.AddBinding(It.IsAny<ConnectionBinding<ConnectionImpl>>()), Times.AtLeastOnce(),
+			handler.Verify(x => x.AddBinding(It.IsAny<ConnectionBinding<AzureServiceBusConnection>>()), Times.AtLeastOnce(),
 				"the connection handler was never bound to any management");
 		}
 
@@ -71,7 +71,7 @@ namespace MassTransit.Transports.AzureServiceBus.Tests
 		[Then]
 		public void handler_binding_should_have_bound()
 		{
-			management.Verify(x => x.Bind(It.IsAny<ConnectionImpl>()));
+			management.Verify(x => x.Bind(It.IsAny<AzureServiceBusConnection>()));
 		}
 	}
 }

@@ -138,7 +138,7 @@ module Queue =
       do! desc |> create nm
       logger.Debug "starting sender"
       return! Async.FromBeginEnd((desc.Path),
-                      mf.BeginCreateMessageSender,
+                      (mf.BeginCreateMessageSender : string * AsyncCallback * obj -> IAsyncResult),
                       mf.EndCreateMessageSender) }
 
   [<Extension;CompiledName("NewSenderAsync")>]

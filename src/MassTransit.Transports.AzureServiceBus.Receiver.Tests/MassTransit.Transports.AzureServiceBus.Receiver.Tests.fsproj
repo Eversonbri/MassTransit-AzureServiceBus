@@ -12,6 +12,7 @@
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <Name>MassTransit.Async.Tests</Name>
     <RestorePackages>true</RestorePackages>
+    <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -32,65 +33,74 @@
     <WarningLevel>3</WarningLevel>
     <DocumentationFile>bin\Release\MassTransit.Async.Tests.XML</DocumentationFile>
   </PropertyGroup>
-  <Import Project="$(MSBuildExtensionsPath32)\FSharp\1.0\Microsoft.FSharp.Targets" Condition="!Exists('$(MSBuildBinPath)\Microsoft.Build.Tasks.v4.0.dll')" />
-  <Import Project="$(MSBuildExtensionsPath32)\..\Microsoft F#\v4.0\Microsoft.FSharp.Targets" Condition=" Exists('$(MSBuildBinPath)\Microsoft.Build.Tasks.v4.0.dll')" />
+  <PropertyGroup>
+    <MinimumVisualStudioVersion Condition="'$(MinimumVisualStudioVersion)' == ''">11</MinimumVisualStudioVersion>
+  </PropertyGroup>
+  <Import Project="$(MSBuildExtensionsPath32)\..\Microsoft SDKs\F#\3.0\Framework\v4.0\Microsoft.FSharp.Targets" Condition="Exists('$(MSBuildExtensionsPath32)\..\Microsoft SDKs\F#\3.0\Framework\v4.0\Microsoft.FSharp.Targets')" />
+  <Import Project="$(MSBuildExtensionsPath32)\..\Microsoft F#\v4.0\Microsoft.FSharp.Targets" Condition="(!Exists('$(MSBuildExtensionsPath32)\..\Microsoft SDKs\F#\3.0\Framework\v4.0\Microsoft.FSharp.Targets')) And (Exists('$(MSBuildExtensionsPath32)\..\Microsoft F#\v4.0\Microsoft.FSharp.Targets'))" />
+  <Import Project="$(MSBuildExtensionsPath32)\FSharp\1.0\Microsoft.FSharp.Targets" Condition="(!Exists('$(MSBuildExtensionsPath32)\..\Microsoft SDKs\F#\3.0\Framework\v4.0\Microsoft.FSharp.Targets')) And (!Exists('$(MSBuildExtensionsPath32)\..\Microsoft F#\v4.0\Microsoft.FSharp.Targets')) And (Exists('$(MSBuildExtensionsPath32)\FSharp\1.0\Microsoft.FSharp.Targets'))" />
   <ItemGroup>
-    <None Include="packages.config" />
     <None Include="Retries.fsx" />
     <Compile Include="Impl.fs" />
     <None Include="app.config" />
     <Compile Include="Retry.fs" />
     <Compile Include="ContextSetUp.fs" />
     <Compile Include="TransientFaults.fs" />
+    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\MassTransit.Transports.AzureServiceBus.Receiver\MassTransit.Transports.AzureServiceBus.Receiver.fsproj">
-      <Name>MassTransit.Transports.AzureServiceBus.Receiver</Name>
-      <Project>{47ac8fb8-c8f9-47e8-a303-7d673e2e24de}</Project>
-      <Private>True</Private>
-    </ProjectReference>
     <Reference Include="Magnum">
-      <HintPath>..\packages\Magnum.2.0.0.4\lib\NET40\Magnum.dll</HintPath>
+      <HintPath>..\packages\Magnum.2.1.0\lib\NET40\Magnum.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="MassTransit">
-      <HintPath>..\packages\MassTransit.2.1.1\lib\net40\MassTransit.dll</HintPath>
+      <HintPath>..\packages\MassTransit.2.7.2\lib\net40\MassTransit.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="MassTransit.NLogIntegration">
-      <HintPath>..\packages\MassTransit.NLog.2.1.1\lib\net40\MassTransit.NLogIntegration.dll</HintPath>
+      <HintPath>..\packages\MassTransit.NLog.2.7.2\lib\net40\MassTransit.NLogIntegration.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="MassTransit.Transports.Msmq">
-      <HintPath>..\packages\MassTransit.2.1.1\lib\net40\MassTransit.Transports.MSMQ.dll</HintPath>
+      <HintPath>..\packages\MassTransit.2.7.2\lib\net40\MassTransit.Transports.MSMQ.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Microsoft.ServiceBus">
-      <HintPath>..\packages\WindowsAzure.ServiceBus.1.6.0.0\lib\net40-full\Microsoft.ServiceBus.dll</HintPath>
+    <Reference Include="Microsoft.ServiceBus, Version=1.8.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35">
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.WindowsAzure.Configuration, Version=1.8.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35">
       <Private>True</Private>
     </Reference>
     <Reference Include="mscorlib" />
     <Reference Include="FSharp.Core" />
     <Reference Include="NLog">
-      <HintPath>..\packages\NLog.2.0.0.2000\lib\net20\NLog.dll</HintPath>
+      <HintPath>..\packages\NLog.2.0.1.2\lib\net40\NLog.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="nunit.framework">
-      <HintPath>..\packages\NUnit.2.6.0.12054\lib\nunit.framework.dll</HintPath>
+      <HintPath>..\packages\NUnit.2.6.2\lib\nunit.framework.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Numerics" />
-    <ProjectReference Include="..\MassTransit.Async\MassTransit.Async.fsproj">
-      <Name>MassTransit.Async</Name>
-      <Project>{47ac8fb8-c8f9-47e8-a303-7d673e2e24de}</Project>
-      <Private>True</Private>
-    </ProjectReference>
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.ServiceModel" />
     <Reference Include="System.Xml" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\MassTransit.Async\MassTransit.Async.fsproj">
+      <Name>MassTransit.Async</Name>
+      <Project>{fab00836-a867-474e-9d9b-b240add41696}</Project>
+      <Private>True</Private>
+    </ProjectReference>
+    <ProjectReference Include="..\MassTransit.Transports.AzureServiceBus.Receiver\MassTransit.Transports.AzureServiceBus.Receiver.fsproj">
+      <Name>MassTransit.Transports.AzureServiceBus.Receiver</Name>
+      <Project>{47ac8fb8-c8f9-47e8-a303-7d673e2e24de}</Project>
+      <Private>True</Private>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(SolutionDir)\.nuget\nuget.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
 	     Other similar extension points exist, see Microsoft.Common.targets.
 	<Target Name="BeforeBuild">

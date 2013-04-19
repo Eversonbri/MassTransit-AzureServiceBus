@@ -11,77 +11,82 @@
 // CONDITIONS OF ANY KIND, either express or implied. See the License for the 
 // specific language governing permissions and limitations under the License.
 
-using System;
-using System.Collections.Generic;
-using MassTransit.Logging;
-using MassTransit.Subscriptions.Coordinator;
-using MassTransit.Subscriptions.Messages;
-using Magnum.Extensions;
-using MassTransit.Util;
-
 #pragma warning disable 1591
 
 namespace MassTransit.Transports.AzureServiceBus
 {
-	/// <summary>
-	/// 	Monitors the subscriptions from the local bus and subscribes the topics with topic clients when subscriptions occur: when they do; create the appropriate topics for them.
-	/// </summary>
-	public class TopicSubscriptionObserver
-		: SubscriptionObserver
-	{
-		static readonly ILog _logger = Logger.Get(typeof (TopicSubscriptionObserver));
+    using System;
+    using System.Collections.Generic;
+    using Logging;
+    using Magnum.Extensions;
+    using Subscriptions.Coordinator;
+    using Subscriptions.Messages;
+    using Util;
 
-		readonly IMessageNameFormatter _formatter;
-		readonly InboundTransportImpl _inboundTransport;
-		readonly Dictionary<Guid, TopicDescription> _bindings;
 
-		public TopicSubscriptionObserver(
-			[NotNull] IMessageNameFormatter formatter,
-			[NotNull] InboundTransportImpl inboundTransport)
-		{
-			if (formatter == null) throw new ArgumentNullException("formatter");
-			if (inboundTransport == null) throw new ArgumentNullException("inboundTransport");
+    /// <summary>
+    /// 	Monitors the subscriptions from the local bus and subscribes the topics with topic clients when subscriptions occur: when they do; create the appropriate topics for them.
+    /// </summary>
+    public class TopicSubscriptionObserver
+        : SubscriptionObserver
+    {
+        static readonly ILog _logger = Logger.Get(typeof(TopicSubscriptionObserver));
+        readonly Dictionary<Guid, TopicDescription> _bindings;
 
-			_formatter = formatter;
-			_inboundTransport = inboundTransport;
+        readonly IMessageNameFormatter _formatter;
+        readonly AzureServiceBusInboundTransport _inboundTransport;
 
-			_bindings = new Dictionary<Guid, TopicDescription>();
-		}
+        public TopicSubscriptionObserver(
+            [NotNull] IMessageNameFormatter formatter,
+            [NotNull] AzureServiceBusInboundTransport inboundTransport)
+        {
+            if (formatter == null)
+                throw new ArgumentNullException("formatter");
+            if (inboundTransport == null)
+                throw new ArgumentNullException("inboundTransport");
 
-		public void OnSubscriptionAdded(SubscriptionAdded message)
-		{
-			if (message == null)
-				throw new ArgumentNullException("message");
+            _formatter = formatter;
+            _inboundTransport = inboundTransport;
 
-			var messageName = GetMessageName(message);
-			_bindings[message.SubscriptionId] = new TopicDescriptionImpl(messageName.ToString());
-			_bindings.Each(kv => _inboundTransport.SignalBoundSubscription(kv.Key /* subId */, kv.Value /* topic desc */));
-		}
+            _bindings = new Dictionary<Guid, TopicDescription>();
+        }
 
-		public void OnSubscriptionRemoved(SubscriptionRemoved message)
-		{
-			_logger.Debug(string.Format("subscription removed: '{0}'", message));
+        public void OnSubscriptionAdded(SubscriptionAdded message)
+        {
+            if (message == null)
+                throw new ArgumentNullException("message");
 
-			var messageName = GetMessageName(message);
+            MessageName messageName = GetMessageName(message);
+            _bindings[message.SubscriptionId] = new TopicDescriptionImpl(messageName.ToString());
+            _bindings.Each(
+                kv => _inboundTransport.SignalBoundSubscription(kv.Key /* subId */, kv.Value /* topic desc */));
+        }
 
-			if (_bindings.ContainsKey(message.SubscriptionId))
-			{
-				_logger.Debug(string.Format("cannot remove topic {0} because we don't know who consumes off of it",
-				                            messageName));
+        public void OnSubscriptionRemoved(SubscriptionRemoved message)
+        {
+            _logger.Debug(string.Format("subscription removed: '{0}'", message));
 
-				_bindings.Remove(message.SubscriptionId);
-				_bindings.Each(kv => _inboundTransport.SignalUnboundSubscription(kv.Key /* subId */, kv.Value /* topic desc */));
-			}
-		}
+            MessageName messageName = GetMessageName(message);
 
-		MessageName GetMessageName(Subscription message)
-		{
-			var messageType = Type.GetType(message.MessageName);
-			return _formatter.GetMessageName(messageType);
-		}
+            if (_bindings.ContainsKey(message.SubscriptionId))
+            {
+                _logger.Debug(string.Format("cannot remove topic {0} because we don't know who consumes off of it",
+                    messageName));
 
-		public void OnComplete()
-		{
-		}
-	}
+                _bindings.Remove(message.SubscriptionId);
+                _bindings.Each(
+                    kv => _inboundTransport.SignalUnboundSubscription(kv.Key /* subId */, kv.Value /* topic desc */));
+            }
+        }
+
+        public void OnComplete()
+        {
+        }
+
+        MessageName GetMessageName(Subscription message)
+        {
+            Type messageType = Type.GetType(message.MessageName);
+            return _formatter.GetMessageName(messageType);
+        }
+    }
 }

@@ -13,34 +13,30 @@
 namespace MassTransit.Transports.AzureServiceBus
 {
     using System;
-    using Util;
 
 
     /// <summary>
-    /// The envelope that we're shoving into AppFabric ServiceBus Queues.
+    /// The default Azure Service Bus message name formatter.
     /// </summary>
-    [Serializable]
-    public class MessageEnvelope
+    public class AzureServiceBusMessageNameFormatter
+        : IMessageNameFormatter
     {
+        readonly DefaultMessageNameFormatter _formatter;
+
         /// <summary>
         /// c'tor
         /// </summary>
-        public MessageEnvelope([NotNull] byte[] actualBody)
+        public AzureServiceBusMessageNameFormatter()
         {
-            if (actualBody == null)
-                throw new ArgumentNullException("actualBody");
-            ActualBody = actualBody;
-        }
-
-        /// <summary> for serialization </summary>
-        [Obsolete("for serialization")]
-        protected MessageEnvelope()
-        {
+            _formatter = new DefaultMessageNameFormatter("....", "--", "..", "-");
         }
 
         /// <summary>
-        /// Gets the actual byte[] of the body.
+        /// Get the message name from the type of message
         /// </summary>
-        public byte[] ActualBody { get; protected set; }
+        public MessageName GetMessageName(Type type)
+        {
+            return _formatter.GetMessageName(type);
+        }
     }
 }

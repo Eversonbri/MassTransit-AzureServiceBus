@@ -25,12 +25,12 @@ namespace MassTransit.Transports.AzureServiceBus.Tests
 	[Scenario]
 	public class When_parsing_application_endpoint_uri
 	{
-		AzureServiceBusEndpointAddressImpl _address;
+		AzureServiceBusEndpointAddress _address;
 
 		[When]
 		public void a_servicebusqueues_address_is_given()
 		{
-			_address = AzureServiceBusEndpointAddressImpl.Parse(
+			_address = AzureServiceBusEndpointAddress.Parse(
 				TestDataFactory.ApplicationEndpoint);
 		}
 
@@ -100,10 +100,10 @@ namespace MassTransit.Transports.AzureServiceBus.Tests
 	[Scenario]
 	public class When_giving_full_hostname_spec
 	{
-		AzureServiceBusEndpointAddressImpl _addressExtended;
+		AzureServiceBusEndpointAddress _addressExtended;
 		Uri _extended;
 		Uri _normal;
-		AzureServiceBusEndpointAddressImpl _address;
+		AzureServiceBusEndpointAddress _address;
 
 		[When]
 		public void a_servicebusqueues_address_is_given()
@@ -112,8 +112,8 @@ namespace MassTransit.Transports.AzureServiceBus.Tests
 			_extended = GetUri(extraHost);
 			_normal = GetUri("");
 
-			_addressExtended = AzureServiceBusEndpointAddressImpl.Parse(_extended);
-			_address = AzureServiceBusEndpointAddressImpl.Parse(_normal);
+			_addressExtended = AzureServiceBusEndpointAddress.Parse(_extended);
+			_address = AzureServiceBusEndpointAddress.Parse(_normal);
 		}
 
 		Uri GetUri(string extraHost)
@@ -148,8 +148,8 @@ namespace MassTransit.Transports.AzureServiceBus.Tests
 		public void something_after_app_name()
 		{
 			IEnumerable<ValidationResult> results;
-			AzureServiceBusEndpointAddressImpl address;
-			AzureServiceBusEndpointAddressImpl.TryParse(_faulty_app, out address, out results)
+			AzureServiceBusEndpointAddress address;
+			AzureServiceBusEndpointAddress.TryParse(_faulty_app, out address, out results)
 				.ShouldBeFalse("parse should have failed");
 
 			AssertGotKey("Application", address, results);
@@ -159,14 +159,14 @@ namespace MassTransit.Transports.AzureServiceBus.Tests
 		public void missing_credentials()
 		{
 			IEnumerable<ValidationResult> results;
-			AzureServiceBusEndpointAddressImpl address;
-			AzureServiceBusEndpointAddressImpl.TryParse(_missing_creds, out address, out results)
+			AzureServiceBusEndpointAddress address;
+			AzureServiceBusEndpointAddress.TryParse(_missing_creds, out address, out results)
 				.ShouldBeFalse("parse should have failed");
 
 			AssertGotKey("UserInfo", address, results);
 		}
 
-		static void AssertGotKey(string key, AzureServiceBusEndpointAddressImpl address, IEnumerable<ValidationResult> results)
+		static void AssertGotKey(string key, AzureServiceBusEndpointAddress address, IEnumerable<ValidationResult> results)
 		{
 			results.ShouldNotBeNull();
 			address.ShouldBeNull();
@@ -180,8 +180,8 @@ namespace MassTransit.Transports.AzureServiceBus.Tests
 	public class When_creating_topic_address
 	{
 		// subjects
-		AzureServiceBusEndpointAddress _queueAddress;
-		AzureServiceBusEndpointAddress _topicAddress;
+		IAzureServiceBusEndpointAddress _queueAddress;
+		IAzureServiceBusEndpointAddress _topicAddress;
 		
 		// assertion data
 		string _topicName;
@@ -193,10 +193,10 @@ namespace MassTransit.Transports.AzureServiceBus.Tests
 		[Given]
 		public void a_normal_address_and_its_topic_corresponding_address()
 		{
-			_queueAddress = AzureServiceBusEndpointAddressImpl.Parse(
+			_queueAddress = AzureServiceBusEndpointAddress.Parse(
 				TestDataFactory.ApplicationEndpoint);
 
-			var formatter = new AzureMessageNameFormatter();
+			var formatter = new AzureServiceBusMessageNameFormatter();
 			_topicName = formatter.GetMessageName(typeof (A)).ToString();
 
 			_topicAddress = _queueAddress.ForTopic(_topicName);

@@ -15,8 +15,8 @@
 
 namespace MassTransit.Transports.AzureServiceBus
 {
-	public static class Constants
-	{
-		public const string Scheme = "azure-sb";
-	}
+    public static class Constants
+    {
+        public const string Scheme = "azure-sb";
+    }
 }
