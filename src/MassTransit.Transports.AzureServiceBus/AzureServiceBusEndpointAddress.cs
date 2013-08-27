@@ -81,7 +81,7 @@ namespace MassTransit.Transports.AzureServiceBus
 
             _rebuiltUri = new Uri(string.Format("azure-sb://{0}:{1}@{2}/{3}{4}",
                 data.UsernameIssuer,
-                data.PasswordSharedSecret,
+                Uri.EscapeDataString(data.PasswordSharedSecret),
                 data.Namespace,
                 data.QueueOrTopicName,
                 suffix));
@@ -235,7 +235,7 @@ namespace MassTransit.Transports.AzureServiceBus
             data = new Data
                 {
                     UsernameIssuer = uri.UserInfo.Split(':')[0],
-                    PasswordSharedSecret = uri.UserInfo.Split(':')[1],
+                    PasswordSharedSecret = Uri.UnescapeDataString(uri.UserInfo.Split(':')[1]),
                     Namespace = uri.Host.Contains(".")
                                     ? uri.Host.Substring(0, uri.Host.IndexOf('.'))
                                     : uri.Host,

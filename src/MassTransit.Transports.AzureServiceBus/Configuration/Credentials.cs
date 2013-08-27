@@ -42,7 +42,7 @@ namespace MassTransit.Transports.AzureServiceBus.Configuration
         public Uri BuildUri(string application = null)
         {
             return
-                new Uri("azure-sb://{0}:{1}@{2}/{3}".FormatWith(IssuerName, Key, Namespace, application ?? Application));
+                new Uri("azure-sb://{0}:{1}@{2}/{3}".FormatWith(IssuerName, Uri.EscapeDataString(Key), Namespace, application ?? Application));
         }
 
         public PreSharedKeyCredentials WithApplication(string application)

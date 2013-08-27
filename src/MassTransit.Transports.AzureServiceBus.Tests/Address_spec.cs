@@ -119,8 +119,8 @@ namespace MassTransit.Transports.AzureServiceBus.Tests
 		Uri GetUri(string extraHost)
 		{
 			return new Uri(string.Format("azure-sb://owner:{0}@{1}{2}/my-application",
-			                                  AccountDetails.Key, AccountDetails.Namespace, extraHost));
-		}
+                Uri.EscapeDataString(AccountDetails.Key), AccountDetails.Namespace, extraHost));
+        }
 
 		[Then]
 		public void the_two_endpoints_namespace_manager_endpoints_equal()
@@ -140,8 +140,8 @@ namespace MassTransit.Transports.AzureServiceBus.Tests
 		public void two_bad_uris()
 		{
 			_faulty_app = new Uri(string.Format("azure-sb://owner:{0}@{1}/my-application/but_then_another_too",
-				AccountDetails.Key, AccountDetails.Namespace));
-			_missing_creds = new Uri(string.Format("azure-sb://owner-pass@lalala.servicebus.windows.net/app"));
+                Uri.EscapeDataString(AccountDetails.Key), AccountDetails.Namespace));
+            _missing_creds = new Uri(string.Format("azure-sb://owner-pass@lalala.servicebus.windows.net/app"));
 		}
 
 		[Test]

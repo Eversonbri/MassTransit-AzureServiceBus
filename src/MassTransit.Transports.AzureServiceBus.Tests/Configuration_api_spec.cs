@@ -27,7 +27,7 @@ namespace MassTransit.Transports.AzureServiceBus.Tests
         {
             using (ServiceBusFactory.New(sbc =>
                 {
-                    sbc.ReceiveFrom(string.Format("azure-sb://owner:{0}@mt-client/my-application", AccountDetails.Key));
+                    sbc.ReceiveFrom(string.Format("azure-sb://owner:{0}@mt-client/my-application", System.Uri.EscapeDataString(AccountDetails.Key)));
                     sbc.UseNLog();
                     sbc.UseAzureServiceBusRouting();
                 }))
