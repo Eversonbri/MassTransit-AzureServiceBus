@@ -211,5 +211,10 @@ namespace MassTransit.Transports.AzureServiceBus
 
             _disposed = true;
         }
+
+        public IEndpointAddress GetAddress(Uri uri, bool transactional)
+        {
+            return new EndpointAddress(uri);
+        }
     }
 }
