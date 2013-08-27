@@ -56,10 +56,10 @@ namespace MassTransit.Transports.AzureServiceBus
             if (message == null)
                 throw new ArgumentNullException("message");
 
-            MessageName messageName = GetMessageName(message);
+            var messageType = GetMessageType(message);
+            var messageName = GetMessageName(messageType);
             _bindings[message.SubscriptionId] = new TopicDescriptionImpl(messageName.ToString());
-            _bindings.Each(
-                kv => _inboundTransport.SignalBoundSubscription(kv.Key /* subId */, kv.Value /* topic desc */));
+            _bindings.Each(kv => _inboundTransport.SignalBoundSubscription(kv.Key /* subId */, kv.Value /* topic desc */, messageType));
         }
 
         public void OnSubscriptionRemoved(SubscriptionRemoved message)
@@ -74,19 +74,27 @@ namespace MassTransit.Transports.AzureServiceBus
                     messageName));
 
                 _bindings.Remove(message.SubscriptionId);
-                _bindings.Each(
-                    kv => _inboundTransport.SignalUnboundSubscription(kv.Key /* subId */, kv.Value /* topic desc */));
+                _bindings.Each(kv => _inboundTransport.SignalUnboundSubscription(kv.Key));
             }
         }
 
-        public void OnComplete()
+        Type GetMessageType(Subscription message)
         {
+            return Type.GetType(message.MessageName);
         }
+
+		MessageName GetMessageName(Type messageType)
+		{
+			return _formatter.GetMessageName(messageType);
+		}
 
         MessageName GetMessageName(Subscription message)
         {
-            Type messageType = Type.GetType(message.MessageName);
-            return _formatter.GetMessageName(messageType);
+            return _formatter.GetMessageName(GetMessageType(message));
         }
+
+		public void OnComplete()
+		{
+		}
     }
 }

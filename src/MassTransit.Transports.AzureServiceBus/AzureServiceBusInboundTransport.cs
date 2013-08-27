@@ -39,7 +39,7 @@ namespace MassTransit.Transports.AzureServiceBus
         readonly IMessageNameFormatter _formatter;
         readonly AzureManagement _management;
         readonly ReceiverSettings _receiverSettings;
-        readonly Cache<Guid, TopicDescription> _subscribed = new ConcurrentCache<Guid, TopicDescription>();
+        readonly Cache<Guid, Tuple<TopicDescription, Type>> _subscribed = new ConcurrentCache<Guid, Tuple<TopicDescription, Type>>();
 
         bool _bound;
         bool _disposed;
@@ -178,17 +178,17 @@ namespace MassTransit.Transports.AzureServiceBus
 
             _receiver = new PerConnectionReceiver(_address, _receiverSettings,
                 recv =>
-                    {
-                        lock (_subscribed)
-                            foreach (TopicDescription d in _subscribed)
-                                recv.Subscribe(d);
-                    },
+                {
+                    lock (_subscribed)
+                        foreach (var d in _subscribed)
+                            recv.Subscribe(d.Item1, d.Item2);
+                },
                 recv =>
-                    {
-                        lock (_subscribed)
-                            foreach (TopicDescription d in _subscribed)
-                                recv.Unsubscribe(d);
-                    });
+                {
+                    lock (_subscribed)
+                        foreach (var d in _subscribed)
+                            recv.Unsubscribe(d.Item1);
+                });
 
             _connectionHandler.AddBinding(_receiver);
         }
@@ -212,14 +212,14 @@ namespace MassTransit.Transports.AzureServiceBus
             }
         }
 
-        public void SignalBoundSubscription(Guid key, TopicDescription value)
+        public void SignalBoundSubscription(Guid key, TopicDescription topic, Type messageType)
         {
             lock (_subscribed)
                 if (!_subscribed.Has(key))
-                    _subscribed.Add(key, value);
+                    _subscribed.Add(key, new Tuple<TopicDescription, Type>(topic, messageType));
         }
 
-        public void SignalUnboundSubscription(Guid key, TopicDescription value)
+        public void SignalUnboundSubscription(Guid key)
         {
             lock (_subscribed)
                 if (_subscribed.Has(key))
