@@ -119,6 +119,9 @@ namespace MassTransit.Transports.AzureServiceBus
                                                 if (!string.IsNullOrWhiteSpace(context.MessageId))
                                                     brokeredMessage.MessageId = context.MessageId;
 
+                                                if (!string.IsNullOrWhiteSpace(context.ContentType))
+                                                    brokeredMessage.ContentType = context.ContentType;
+
                                                 return brokeredMessage;
                                             }, 1, cb, state);
                                     },

@@ -102,6 +102,7 @@ namespace MassTransit.Transports.AzureServiceBus
                         context.SetMessageId(message.MessageId);
                         context.SetInputAddress(Address);
                         context.SetCorrelationId(message.CorrelationId);
+                        context.SetContentType(message.ContentType);
 
                         if (_logger.IsDebugEnabled)
                             TraceMessage(context);
