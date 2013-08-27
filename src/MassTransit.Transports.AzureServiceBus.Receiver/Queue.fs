@@ -106,7 +106,7 @@ module Queue =
   let rec delete (nm : NamespaceManager) (desc : QueueDescription) =
     asyncRetry {
       let! exists = desc |> exists nm
-      if exists then return ()
+      if not exists then return ()
       else
         try
           logger.DebugFormat("deleting queue '{0}'", desc)
