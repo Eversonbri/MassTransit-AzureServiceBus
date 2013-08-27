@@ -41,7 +41,6 @@ namespace MassTransit.Transports.AzureServiceBus
         bool _disposed;
 
         int _messagesInFlight;
-        int _sleeping;
 
         /// <summary>
         /// 	c'tor
