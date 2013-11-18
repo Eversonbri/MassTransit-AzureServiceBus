@@ -12,18 +12,17 @@
 // specific language governing permissions and limitations under the License.
 namespace MassTransit.Transports.AzureServiceBus
 {
+    using Microsoft.ServiceBus;
+
+
     /// <summary>
-    /// The default Azure Service Bus message name formatter.
+    ///     The connection settings to connect to Azure Service Bus, requires a token provider
     /// </summary>
-    public class AzureServiceBusMessageNameFormatter
-        : DefaultMessageNameFormatter
+    public interface IConnectionSettings
     {
-        /// <summary>
-        /// Formats message names in a way that can be handled by Azure Service Bus
-        /// </summary>
-        public AzureServiceBusMessageNameFormatter()
-            : base("....", "--", "..", "-")
-        {
-        }
+        TokenProvider TokenProvider { get; }
+
+        string Key { get; }
+        string KeyName { get; }
     }
 }

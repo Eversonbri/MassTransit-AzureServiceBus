@@ -1,4 +1,4 @@
-// Copyright 2012 Henrik Feldt
+// Copyright 2012 Henrik Feldt, Chris Patterson, et. al.
 //  
 // Licensed under the Apache License, Version 2.0 (the "License"); you may not use 
 // this file except in compliance with the License. You may obtain a copy of the 
@@ -10,9 +10,6 @@
 // under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR 
 // CONDITIONS OF ANY KIND, either express or implied. See the License for the 
 // specific language governing permissions and limitations under the License.
-
-#pragma warning disable 1591
-
 namespace MassTransit.Transports.AzureServiceBus.Configuration
 {
     using System;
@@ -26,15 +23,15 @@ namespace MassTransit.Transports.AzureServiceBus.Configuration
     public class Credentials
         : PreSharedKeyCredentials
     {
-        public Credentials(string issuerName, string key, string ns, string application)
+        public Credentials(string keyName, string key, string ns, string application)
         {
-            IssuerName = issuerName;
+            KeyName = keyName;
             Key = key;
             Namespace = ns;
             Application = application;
         }
 
-        public string IssuerName { get; private set; }
+        public string KeyName { get; private set; }
         public string Key { get; private set; }
         public string Namespace { get; private set; }
         public string Application { get; private set; }
@@ -42,12 +39,12 @@ namespace MassTransit.Transports.AzureServiceBus.Configuration
         public Uri BuildUri(string application = null)
         {
             return
-                new Uri("azure-sb://{0}:{1}@{2}/{3}".FormatWith(IssuerName, Uri.EscapeDataString(Key), Namespace, application ?? Application));
+                new Uri("azure-sb://{0}:{1}@{2}/{3}".FormatWith(KeyName, Uri.EscapeDataString(Key), Namespace, application ?? Application));
         }
 
         public PreSharedKeyCredentials WithApplication(string application)
         {
-            return new Credentials(IssuerName, Key, Namespace, application);
+            return new Credentials(KeyName, Key, Namespace, application);
         }
     }
 }

@@ -1,4 +1,4 @@
-// Copyright 2012 Henrik Feldt
+// Copyright 2012 Henrik Feldt, Chris Patterson, et. al.
 //  
 // Licensed under the Apache License, Version 2.0 (the "License"); you may not use 
 // this file except in compliance with the License. You may obtain a copy of the 
@@ -15,7 +15,7 @@ namespace MassTransit.Transports.AzureServiceBus.Configuration
     using System;
     using System.Collections.Generic;
     using Exceptions;
-    using Magnum.Extensions;
+    using Magnum.Caching;
     using Magnum.Reflection;
     using Pipeline.Configuration;
     using Pipeline.Sinks;
@@ -26,12 +26,14 @@ namespace MassTransit.Transports.AzureServiceBus.Configuration
     /// Interceptor for bus.Publish calls; look in the endpoints of the bus for 
     /// endpoints of the published message type. Highly cohesive with <see cref="PublishEndpointSinkLocator"/>.
     /// </summary>
-    public class PublishEndpointInterceptor : IOutboundMessageInterceptor
+    public class PublishEndpointInterceptor :
+        IOutboundMessageInterceptor
     {
-        readonly Dictionary<Type, UnsubscribeAction> _added;
+        readonly Cache<Type, UnsubscribeAction> _added;
         readonly IAzureServiceBusEndpointAddress _address;
         readonly ServiceBus _bus;
         readonly IMessageNameFormatter _formatter;
+        InboundAzureServiceBusTransport _inbound;
 
         /// <summary>
         /// c'tor
@@ -41,20 +43,23 @@ namespace MassTransit.Transports.AzureServiceBus.Configuration
         {
             if (bus == null)
                 throw new ArgumentNullException("bus");
-
             _bus = bus;
 
-            var inbound = bus.Endpoint.InboundTransport as AzureServiceBusInboundTransport;
-
+            var inbound = bus.Endpoint.InboundTransport as InboundAzureServiceBusTransport;
             if (inbound == null)
             {
                 throw new ConfigurationException(
                     "The bus must be configured to receive from an Azure ServiceBus Endpoint for this interceptor to work.");
             }
-
+            _inbound = inbound;
             _formatter = inbound.MessageNameFormatter;
-            _address = inbound.Address.CastAs<IAzureServiceBusEndpointAddress>();
-            _added = new Dictionary<Type, UnsubscribeAction>();
+
+            var address = inbound.Address as IAzureServiceBusEndpointAddress;
+            if (address == null)
+                throw new ConfigurationException("The bus inbound address must be an azure service bus address");
+
+            _address = address;
+            _added = new ConcurrentCache<Type, UnsubscribeAction>();
         }
 
         void IOutboundMessageInterceptor.PreDispatch(ISendContext context)
@@ -63,7 +68,7 @@ namespace MassTransit.Transports.AzureServiceBus.Configuration
             {
                 Type messageType = context.DeclaringMessageType;
 
-                if (_added.ContainsKey(messageType))
+                if (_added.Has(messageType))
                     return;
 
                 AddEndpointForType(messageType);
@@ -82,21 +87,17 @@ namespace MassTransit.Transports.AzureServiceBus.Configuration
         /// <param name="messageType">The type of message to add an endpoint for.</param>
         void AddEndpointForType(Type messageType)
         {
-            using (var management = new AzureManagementEndpointManagement(_address))
+            IEnumerable<Type> types = _inbound.SubscribeTopicsForPublisher(messageType, _formatter);
+            foreach (Type type in types)
             {
-                IEnumerable<Type> types = management.CreateTopicsForPublisher(messageType, _formatter);
+                if (_added.Has(type))
+                    continue;
 
-                foreach (Type type in types)
-                {
-                    if (_added.ContainsKey(type))
-                        continue;
+                MessageName messageName = _formatter.GetMessageName(type);
 
-                    MessageName messageName = _formatter.GetMessageName(type);
+                IAzureServiceBusEndpointAddress messageEndpointAddress = _address.ForTopic(messageName.ToString());
 
-                    IAzureServiceBusEndpointAddress messageEndpointAddress = _address.ForTopic(messageName.ToString());
-
-                    FindOrAddEndpoint(type, messageEndpointAddress);
-                }
+                FindOrAddEndpoint(type, messageEndpointAddress);
             }
         }
 

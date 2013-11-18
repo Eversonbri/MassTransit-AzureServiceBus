@@ -40,21 +40,22 @@ namespace MassTransit.Transports.AzureServiceBus.Configuration
     }
 
 
-    internal class ReceiverSettingsImpl : ReceiverSettings
+    class InboundSettings :
+        IInboundSettings
     {
-        public ReceiverSettingsImpl()
+        public InboundSettings()
         {
             Concurrency = 1u;
             BufferSize = 5u;
             NThAsync = 5u;
             ReceiveTimeout = TimeSpan.FromMilliseconds(50.0);
-            GetReceiverName = (_ => NameHelper.GenerateRandomName());
+            ReceiverName = NameHelper.GenerateRandomName();
         }
 
         public uint Concurrency { get; set; }
         public uint BufferSize { get; set; }
         public uint NThAsync { get; set; }
         public TimeSpan ReceiveTimeout { get; set; }
-        public Func<Type, string> GetReceiverName { get; set; }
+        public string ReceiverName { get; set; }
     }
 }

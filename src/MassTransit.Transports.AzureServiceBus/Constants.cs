@@ -11,12 +11,16 @@
 // CONDITIONS OF ANY KIND, either express or implied. See the License for the 
 // specific language governing permissions and limitations under the License.
 
-#pragma warning disable 1591
-
 namespace MassTransit.Transports.AzureServiceBus
 {
+    /// <summary>
+    /// The Scheme for the transport factory
+    /// </summary>
     public static class Constants
     {
+        /// <summary>
+        /// Used by the transport factory for the scheme
+        /// </summary>
         public const string Scheme = "azure-sb";
     }
 }

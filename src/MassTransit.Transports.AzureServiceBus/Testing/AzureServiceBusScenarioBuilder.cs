@@ -16,6 +16,7 @@
 namespace MassTransit.Testing
 {
     using ScenarioBuilders;
+    using Transports.AzureServiceBus;
     using Transports.AzureServiceBus.Configuration;
     using Util;
 

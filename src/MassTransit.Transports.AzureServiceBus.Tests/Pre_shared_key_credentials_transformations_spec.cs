@@ -13,7 +13,6 @@
 // ReSharper disable InconsistentNaming
 
 using System;
-using Magnum.TestFramework;
 using MassTransit.Transports.AzureServiceBus.Configuration;
 using MassTransit.Transports.AzureServiceBus.Tests.Framework;
 using NUnit.Framework;
@@ -33,7 +32,7 @@ namespace MassTransit.Transports.AzureServiceBus.Tests
 		{
 			var first = impl.BuildUri("app2");
 			var second = FormatUri("app2");
-			first.PathAndQuery.ShouldEqual(second.PathAndQuery);
+			Assert.AreEqual(first.PathAndQuery, second.PathAndQuery);
 		}
 
 		[Test, TestCaseSource("Implementations")]
@@ -41,10 +40,10 @@ namespace MassTransit.Transports.AzureServiceBus.Tests
 			PreSharedKeyCredentials impl)
 		{
 			var credentials = impl.WithApplication("app3");
-			credentials.Application.ShouldEqual("app3");
-			credentials.IssuerName.ShouldEqual(impl.IssuerName);
-			credentials.Key.ShouldEqual(impl.Key);
-			credentials.Namespace.ShouldEqual(impl.Namespace);
+			Assert.AreEqual(credentials.Application, "app3");
+			Assert.AreEqual(credentials.KeyName, impl.KeyName);
+			Assert.AreEqual(credentials.Key, impl.Key);
+            Assert.AreEqual(credentials.Namespace, impl.Namespace);
 		}
 
 

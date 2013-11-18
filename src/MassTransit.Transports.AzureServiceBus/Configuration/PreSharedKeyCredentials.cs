@@ -24,7 +24,7 @@ namespace MassTransit.Transports.AzureServiceBus.Configuration
         /// <summary>
         /// Gets the issuer name as specified by Azure.
         /// </summary>
-        string IssuerName { get; }
+        string KeyName { get; }
 
         /// <summary>
         /// Gets the base64-encoded key for the service as specified by Azure.

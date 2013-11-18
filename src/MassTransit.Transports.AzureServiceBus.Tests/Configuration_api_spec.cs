@@ -14,12 +14,10 @@ namespace MassTransit.Transports.AzureServiceBus.Tests
 {
     using Configuration;
     using Framework;
-    using Magnum.TestFramework;
-    using NLogIntegration;
     using NUnit.Framework;
 
 
-    [Scenario, Integration, Explicit("uses faulty data")]
+    [TestFixture, Explicit("uses faulty data")]
     public class Configuration_api_spec
     {
         [Test]
@@ -28,7 +26,6 @@ namespace MassTransit.Transports.AzureServiceBus.Tests
             using (ServiceBusFactory.New(sbc =>
                 {
                     sbc.ReceiveFrom(string.Format("azure-sb://owner:{0}@mt-client/my-application", System.Uri.EscapeDataString(AccountDetails.Key)));
-                    sbc.UseNLog();
                     sbc.UseAzureServiceBusRouting();
                 }))
             {
@@ -41,7 +38,6 @@ namespace MassTransit.Transports.AzureServiceBus.Tests
             using (ServiceBusFactory.New(sbc =>
                 {
                     sbc.ReceiveFromComponents("owner", AccountDetails.Key, "mt-client", "my-application");
-                    sbc.UseNLog();
                     sbc.UseAzureServiceBusRouting();
                 }))
             {

@@ -10,7 +10,7 @@ namespace MassTransit.Transports.AzureServiceBus.Tests.Framework
 	{
 		public static TokenProvider CreateTokenProvider()
 		{
-			return TokenProvider.CreateSharedSecretTokenProvider(AccountDetails.IssuerName, AccountDetails.Key);
+		    return TokenProvider.CreateSharedAccessSignatureTokenProvider(AccountDetails.KeyName, AccountDetails.Key);
 		}
 
 		public static MessagingFactory CreateMessagingFactory(TokenProvider tokenProvider = null)

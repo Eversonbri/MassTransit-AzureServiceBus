@@ -1,4 +1,4 @@
-﻿// Copyright 2012 Henrik Feldt
+﻿// Copyright 2012 Henrik Feldt, Chris Patterson, et. al.
 //  
 // Licensed under the Apache License, Version 2.0 (the "License"); you may not use 
 // this file except in compliance with the License. You may obtain a copy of the 
@@ -12,14 +12,25 @@
 // specific language governing permissions and limitations under the License.
 namespace MassTransit.Transports.AzureServiceBus.Configuration
 {
-    internal class SenderSettingsImpl
-        : SenderSettings
-    {
-        public SenderSettingsImpl()
-        {
-            MaxOutstanding = 10;
-        }
+    using System;
 
-        public int MaxOutstanding { get; set; }
+
+    public class AzureServiceBusSettings :
+        IInboundSettings,
+        IOutboundSettings
+    {
+        public TimeSpan LockDuration { get; set; }
+
+        public TimeSpan DefaultMessageTimeToLive { get; set; }
+
+        public bool DeadLetteringOnExpiration { get; set; }
+
+        public bool BatchedOperations { get; set; }
+
+        public TimeSpan ReceiveTimeout { get; set; }
+
+        public int MaxOutstandingSendOperations { get; set; }
+
+        public string ReceiverName { get; set; }
     }
 }

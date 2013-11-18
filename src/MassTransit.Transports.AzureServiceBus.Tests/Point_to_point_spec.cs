@@ -17,92 +17,88 @@
 using System;
 using Magnum;
 using Magnum.Extensions;
-using Magnum.TestFramework;
-using MassTransit.TestFramework;
-using MassTransit.TestFramework.Fixtures;
 using MassTransit.Transports.AzureServiceBus.Tests.Framework;
 using NUnit.Framework;
 
 namespace MassTransit.Transports.AzureServiceBus.Tests
 {
-	[Description("Validates the simplest possible behaviour; sending a message to a known receiver."),
-	 Scenario,
-	 Integration]
-	public class Point_to_point_spec
-		: TwoBusTestFixture<TransportFactoryImpl>
-	{
-		public Point_to_point_spec()
-		{
-			var creds = new AccountDetails();
-			LocalUri = creds.BuildUri("rat_hole");
-			RemoteUri = creds.BuildUri("hungry_cat");
-		}
-
-		protected override void ConfigureLocalBus(BusConfigurators.ServiceBusConfigurator configurator)
-		{
-			configurator.UseJsonSerializer();
-			base.ConfigureLocalBus(configurator);
-		}
-
-		protected override void ConfigureRemoteBus(BusConfigurators.ServiceBusConfigurator configurator)
-		{
-			configurator.UseJsonSerializer();
-			base.ConfigureRemoteBus(configurator);
-		}
-
-		Guid rat_id;
-		ConsumerOf<Rat> cat;
-		Future<Rat> received_rat;
-		MassTransit.UnsubscribeAction cat_nap_unsubscribes;
-
-		[Given]
-		public void a_rat_is_sent_to_a_hungry_cat()
-		{
-			rat_id = CombGuid.Generate();
-			received_rat = new Future<Rat>();
-			cat = new ConsumerOf<Rat>(a_large_rat_actually =>
-				{
-					Console.WriteLine("Miaooo!!!");
-					Console.WriteLine(a_large_rat_actually.Sound + "!!!");
-					Console.WriteLine("Cat: chase! ...");
-					Console.WriteLine("*silence*");
-					Console.WriteLine("Cat: *Crunch chrunch*");
-					received_rat.Complete(a_large_rat_actually);
-				});
-
-			cat_nap_unsubscribes = RemoteBus.SubscribeInstance(cat);
-			
-			// we need to make sure this bus is up before sending to it
-			RemoteBus.Endpoint.InboundTransport.Receive(ctx => c => { }, 4.Seconds());
-			
-			LocalBus.GetEndpoint(RemoteUri).Send<Rat>(new
-				{
-					Sound = "Eeeek",
-					CorrelationId = rat_id
-				});
-		}
-
-		[Then]
-		public void the_rat_got_eaten()
-		{
-			received_rat
-				.WaitUntilCompleted(8.Seconds())
-				.ShouldBeTrue();
-
-			received_rat.Value
-				.CorrelationId
-				.ShouldEqual(rat_id);
-		}
-
-		[TearDown]
-		public void rats_dance_on_table()
-		{
-			if (cat_nap_unsubscribes != null)
-				cat_nap_unsubscribes();
-
-
-		}
-	}
+	//[Description("Validates the simplest possible behaviour; sending a message to a known receiver."),
+	// TestFixture]
+//	public class Point_to_point_spec
+//		: TwoBusTestFixture<AzureServiceBusTransportFactory>
+//	{
+//		public Point_to_point_spec()
+//		{
+//			var creds = new AccountDetails();
+//			LocalUri = creds.BuildUri("rat_hole");
+//			RemoteUri = creds.BuildUri("hungry_cat");
+//		}
+//
+//		protected override void ConfigureLocalBus(BusConfigurators.ServiceBusConfigurator configurator)
+//		{
+//			configurator.UseJsonSerializer();
+//			base.ConfigureLocalBus(configurator);
+//		}
+//
+//		protected override void ConfigureRemoteBus(BusConfigurators.ServiceBusConfigurator configurator)
+//		{
+//			configurator.UseJsonSerializer();
+//			base.ConfigureRemoteBus(configurator);
+//		}
+//
+//		Guid rat_id;
+//		ConsumerOf<Rat> cat;
+//		Future<Rat> received_rat;
+//		MassTransit.UnsubscribeAction cat_nap_unsubscribes;
+//
+//		[Given]
+//		public void a_rat_is_sent_to_a_hungry_cat()
+//		{
+//			rat_id = CombGuid.Generate();
+//			received_rat = new Future<Rat>();
+//			cat = new ConsumerOf<Rat>(a_large_rat_actually =>
+//				{
+//					Console.WriteLine("Miaooo!!!");
+//					Console.WriteLine(a_large_rat_actually.Sound + "!!!");
+//					Console.WriteLine("Cat: chase! ...");
+//					Console.WriteLine("*silence*");
+//					Console.WriteLine("Cat: *Crunch chrunch*");
+//					received_rat.Complete(a_large_rat_actually);
+//				});
+//
+//			cat_nap_unsubscribes = RemoteBus.SubscribeInstance(cat);
+//			
+//			// we need to make sure this bus is up before sending to it
+//			RemoteBus.Endpoint.InboundTransport.Receive(ctx => c => { }, 4.Seconds());
+//			
+//			LocalBus.GetEndpoint(RemoteUri).Send<Rat>(new
+//				{
+//					Sound = "Eeeek",
+//					CorrelationId = rat_id
+//				});
+//		}
+//
+//		[Then]
+//		public void the_rat_got_eaten()
+//		{
+//			received_rat
+//				.WaitUntilCompleted(8.Seconds())
+//				.ShouldBeTrue();
+//
+//			received_rat.Value
+//				.CorrelationId
+//				.ShouldEqual(rat_id);
+//		}
+//
+//		[TearDown]
+//		public void rats_dance_on_table()
+//		{
+//			if (cat_nap_unsubscribes != null)
+//				cat_nap_unsubscribes();
+//
+//
+//		}
+//	}
 
 	public interface Rat : CorrelatedBy<Guid>
 	{

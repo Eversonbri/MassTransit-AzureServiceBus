@@ -1,40 +1,42 @@
-using Magnum.TestFramework;
 using MassTransit.Transports.AzureServiceBus.Configuration;
 
 namespace MassTransit.Transports.AzureServiceBus.Tests
 {
-	public class Credentials_impl_spec
+    using NUnit.Framework;
+
+
+    public class Loading_the_credentials
 	{
-		Credentials subject;
+		Credentials _subject;
 
-		[Given]
-		public void creds()
+		[SetUp]
+		public void Setup()
 		{
-			subject = new Credentials("owner", "key", "ns", "appx");
+			_subject = new Credentials("owner", "key", "ns", "appx");
 		}
 
-		[Then]
-		public void should_have_correct_issuer_name()
+		[Test]
+		public void Should_have_correct_issuer_name()
 		{
-			subject.IssuerName.ShouldEqual("owner");
+			Assert.AreEqual("owner", _subject.KeyName);
 		}
 
-		[Then]
-		public void should_have_correct_key()
+        [Test]
+		public void Should_have_correct_key()
 		{
-			subject.Key.ShouldEqual("key");
+            Assert.AreEqual("key", _subject.Key);
 		}
 
-		[Then]
-		public void should_have_correct_ns()
+        [Test]
+		public void Should_have_correct_ns()
 		{
-			subject.Namespace.ShouldEqual("ns");
+            Assert.AreEqual("ns", _subject.Namespace);
 		}
 
-		[Then]
-		public void should_have_correct_app()
+        [Test]
+		public void Should_have_correct_app()
 		{
-			subject.Application.ShouldEqual("appx");
+            Assert.AreEqual("appx", _subject.Application);
 		}
 	}
 }

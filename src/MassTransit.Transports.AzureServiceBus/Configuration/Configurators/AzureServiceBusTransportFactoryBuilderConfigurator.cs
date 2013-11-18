@@ -10,20 +10,15 @@
 // under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR 
 // CONDITIONS OF ANY KIND, either express or implied. See the License for the 
 // specific language governing permissions and limitations under the License.
-namespace MassTransit.Transports.AzureServiceBus
+namespace MassTransit.Transports.AzureServiceBus.Configuration.Configurators
 {
-    /// <summary>
-    /// The default Azure Service Bus message name formatter.
-    /// </summary>
-    public class AzureServiceBusMessageNameFormatter
-        : DefaultMessageNameFormatter
+    using Builders;
+    using MassTransit.Configurators;
+
+
+    public interface AzureServiceBusTransportFactoryBuilderConfigurator :
+        Configurator
     {
-        /// <summary>
-        /// Formats message names in a way that can be handled by Azure Service Bus
-        /// </summary>
-        public AzureServiceBusMessageNameFormatter()
-            : base("....", "--", "..", "-")
-        {
-        }
+        AzureServiceBusTransportFactoryBuilder Configure(AzureServiceBusTransportFactoryBuilder builder);
     }
 }

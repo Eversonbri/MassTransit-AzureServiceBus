@@ -1,4 +1,4 @@
-﻿// Copyright 2012 Henrik Feldt
+﻿// Copyright 2012 Henrik Feldt, Chris Patterson, et. al.
 //  
 // Licensed under the Apache License, Version 2.0 (the "License"); you may not use 
 // this file except in compliance with the License. You may obtain a copy of the 
@@ -10,15 +10,12 @@
 // under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR 
 // CONDITIONS OF ANY KIND, either express or implied. See the License for the 
 // specific language governing permissions and limitations under the License.
-
-#pragma warning disable 1591
-
 namespace MassTransit.Transports.AzureServiceBus
 {
     using System;
     using System.Collections.Generic;
     using Logging;
-    using Magnum.Extensions;
+    using Microsoft.ServiceBus.Messaging;
     using Subscriptions.Coordinator;
     using Subscriptions.Messages;
     using Util;
@@ -27,18 +24,16 @@ namespace MassTransit.Transports.AzureServiceBus
     /// <summary>
     /// 	Monitors the subscriptions from the local bus and subscribes the topics with topic clients when subscriptions occur: when they do; create the appropriate topics for them.
     /// </summary>
-    public class TopicSubscriptionObserver
-        : SubscriptionObserver
+    public class TopicSubscriptionObserver :
+        SubscriptionObserver
     {
-        static readonly ILog _logger = Logger.Get(typeof(TopicSubscriptionObserver));
-        readonly Dictionary<Guid, TopicDescription> _bindings;
+        static readonly ILog _log = Logger.Get(typeof(TopicSubscriptionObserver));
+        readonly IDictionary<Guid, TopicDescription> _bindings;
 
         readonly IMessageNameFormatter _formatter;
-        readonly AzureServiceBusInboundTransport _inboundTransport;
+        readonly InboundAzureServiceBusTransport _inboundTransport;
 
-        public TopicSubscriptionObserver(
-            [NotNull] IMessageNameFormatter formatter,
-            [NotNull] AzureServiceBusInboundTransport inboundTransport)
+        public TopicSubscriptionObserver([NotNull] InboundAzureServiceBusTransport inboundTransport, [NotNull] IMessageNameFormatter formatter)
         {
             if (formatter == null)
                 throw new ArgumentNullException("formatter");
@@ -56,45 +51,36 @@ namespace MassTransit.Transports.AzureServiceBus
             if (message == null)
                 throw new ArgumentNullException("message");
 
-            var messageType = GetMessageType(message);
-            var messageName = GetMessageName(messageType);
-            _bindings[message.SubscriptionId] = new TopicDescriptionImpl(messageName.ToString());
-            _bindings.Each(kv => _inboundTransport.SignalBoundSubscription(kv.Key /* subId */, kv.Value /* topic desc */, messageType));
+            Type messageType = Type.GetType(message.MessageName);
+            if (messageType == null)
+            {
+                _log.InfoFormat("Unknown message type '{0}', unable to add subscription", message.MessageName);
+                return;
+            }
+
+            MessageName messageName = _formatter.GetMessageName(messageType);
+            var topicDescription = new TopicDescription(messageName.ToString());
+
+            _inboundTransport.AddTopicSubscriber(topicDescription);
+
+            _bindings[message.SubscriptionId] = topicDescription;
         }
 
         public void OnSubscriptionRemoved(SubscriptionRemoved message)
         {
-            _logger.Debug(string.Format("subscription removed: '{0}'", message));
+            _log.Debug(string.Format("subscription removed: '{0}'", message));
 
-            MessageName messageName = GetMessageName(message);
-
-            if (_bindings.ContainsKey(message.SubscriptionId))
+            TopicDescription topicDescription;
+            if (_bindings.TryGetValue(message.SubscriptionId, out topicDescription))
             {
-                _logger.Debug(string.Format("cannot remove topic {0} because we don't know who consumes off of it",
-                    messageName));
+                _inboundTransport.RemoveTopicSubscriber(topicDescription);
 
                 _bindings.Remove(message.SubscriptionId);
-                _bindings.Each(kv => _inboundTransport.SignalUnboundSubscription(kv.Key));
             }
         }
 
-        Type GetMessageType(Subscription message)
+        public void OnComplete()
         {
-            return Type.GetType(message.MessageName);
         }
-
-		MessageName GetMessageName(Type messageType)
-		{
-			return _formatter.GetMessageName(messageType);
-		}
-
-        MessageName GetMessageName(Subscription message)
-        {
-            return _formatter.GetMessageName(GetMessageType(message));
-        }
-
-		public void OnComplete()
-		{
-		}
     }
 }

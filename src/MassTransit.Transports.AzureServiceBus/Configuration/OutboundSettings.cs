@@ -10,19 +10,16 @@
 // under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR 
 // CONDITIONS OF ANY KIND, either express or implied. See the License for the 
 // specific language governing permissions and limitations under the License.
-
-using MassTransit.NLogIntegration.Logging;
-using NUnit.Framework;
-
-namespace MassTransit.Transports.AzureServiceBus.Tests
+namespace MassTransit.Transports.AzureServiceBus.Configuration
 {
-	[SetUpFixture]
-	public class NLogContextSetup
-	{
-		[SetUp]
-		public void SetUpLogging()
-		{
-			Logging.Logger.UseLogger(new NLogLogger());
-		}
-	}
+    public class OutboundSettings
+        : IOutboundSettings
+    {
+        public OutboundSettings()
+        {
+            MaxOutstanding = 10;
+        }
+
+        public int MaxOutstanding { get; set; }
+    }
 }

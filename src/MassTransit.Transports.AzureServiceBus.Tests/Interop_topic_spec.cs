@@ -1,31 +1,27 @@
 using System;
-using Magnum.TestFramework;
 using MassTransit.Transports.AzureServiceBus.Tests.Framework;
 using Microsoft.ServiceBus;
 using NUnit.Framework;
 
 namespace MassTransit.Transports.AzureServiceBus.Tests
 {
-	[Scenario, Integration]
+	[TestFixture]
 	public class Interop_topic_spec
 	{
 		NamespaceManager nm;
 		AzureServiceBusMessageNameFormatter _formatter;
 
-		[When]
+		[SetUp]
 		public void theres_a_namespace_manager_available()
 		{
 			var mf = TestConfigFactory.CreateMessagingFactory();
 			nm = TestConfigFactory.CreateNamespaceManager(mf);
-		}
 
-		[Given]
-		public void a_message_name_formatter()
-		{
-			_formatter = new AzureServiceBusMessageNameFormatter();
-		}
+            _formatter = new AzureServiceBusMessageNameFormatter();
+        }
 
-		[Then]
+	
+		[Test]
 		[TestCase(typeof(NameEasyToo))]
 		[TestCase(typeof(Nested))]
 		[TestCase(typeof(NameEasy))]
