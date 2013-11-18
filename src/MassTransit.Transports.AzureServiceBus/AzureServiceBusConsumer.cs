@@ -44,7 +44,7 @@ namespace MassTransit.Transports.AzureServiceBus
             MessageReceiver receiver = null;
             try
             {
-                BindQueue(connection.NamespaceManager);
+                BindQueue(connection);
 
                 receiver = connection.MessagingFactory.CreateMessageReceiver(_address.QueueName, ReceiveMode.PeekLock);
 
@@ -69,11 +69,11 @@ namespace MassTransit.Transports.AzureServiceBus
             }
         }
 
-        void BindQueue(NamespaceManager namespaceManager)
+        void BindQueue(AzureServiceBusConnection connection)
         {
             try
             {
-                CreateQueue(namespaceManager, _address.QueueName);
+                connection.CreateQueue(_address.QueueName);
             }
             catch (MessagingEntityAlreadyExistsException)
             {
@@ -97,19 +97,6 @@ namespace MassTransit.Transports.AzureServiceBus
                     _receiver = null;
                 }
             }
-        }
-
-        void CreateQueue(NamespaceManager manager, string queueName)
-        {
-            var description = new QueueDescription(queueName)
-            {
-                DefaultMessageTimeToLive = _address.DefaultMessageTimeToLive,
-                EnableBatchedOperations = _address.EnableBatchOperations,
-                LockDuration = _address.LockDuration,
-                MaxDeliveryCount = _address.MaxDeliveryCount,
-            };
-
-            manager.CreateQueue(description);
         }
 
         public BrokeredMessage Get(TimeSpan timeout)

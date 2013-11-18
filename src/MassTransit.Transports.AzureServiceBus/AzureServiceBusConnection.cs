@@ -28,5 +28,11 @@ namespace MassTransit.Transports.AzureServiceBus
         /// The namespace manager for the connection
         /// </summary>
         NamespaceManager NamespaceManager { get; }
+
+
+        void CreateTopic(string topicName);
+
+
+        void CreateQueue(string queueName);
     }
 }

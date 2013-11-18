@@ -90,8 +90,6 @@ namespace MassTransit.Transports.AzureServiceBus.Tests
 
             _correlationId = NewId.NextGuid();
             _publisherBus.Publish<CorrelatedTestMessage>(new CorrelatedTestMessageImpl(_correlationId, "meek"));
-
-            Assert.IsTrue(_receivedAnyRat.Task.Wait(15.Seconds()));
         }
 
         [TestFixtureTearDown]
@@ -110,6 +108,8 @@ namespace MassTransit.Transports.AzureServiceBus.Tests
         [Test]
         public void Sound_equals()
         {
+            Assert.IsTrue(_receivedAnyRat.Task.Wait(15.Seconds()));
+
             Assert.AreEqual("meek", _receivedAnyRat.Task.Result.SoundsLike);
         }
     }

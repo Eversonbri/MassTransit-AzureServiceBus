@@ -13,6 +13,7 @@
 namespace MassTransit.Transports.AzureServiceBus
 {
     using System;
+    using Exceptions;
     using Logging;
     using Magnum.Extensions;
     using Microsoft.ServiceBus;
@@ -39,8 +40,8 @@ namespace MassTransit.Transports.AzureServiceBus
         /// <summary>
         ///     A connection is stored per connection string
         /// </summary>
-        /// <param name="address">The address for the connection</param>
-        /// <param name="tokenProvider"></param>
+        /// <param topicName="address">The address for the connection</param>
+        /// <param topicName="tokenProvider"></param>
         /// <exception cref="ArgumentNullException"></exception>
         public AzureServiceBusConnectionImpl(IAzureServiceBusEndpointAddress address, TokenProvider tokenProvider)
         {
@@ -113,12 +114,66 @@ namespace MassTransit.Transports.AzureServiceBus
 
         public MessagingFactory MessagingFactory
         {
-            get { return _factory; }
+            get
+            {
+                if (_factory == null)
+                    throw new TransportException(_address.Uri, "The messaging factory is not available");
+
+                return _factory;
+            }
         }
 
         public NamespaceManager NamespaceManager
         {
-            get { return _manager; }
+            get
+            {
+                if (_manager == null)
+                    throw new TransportException(_address.Uri, "The namespace manager is not available");
+
+                return _manager;
+            }
+        }
+
+        public void CreateQueue(string queueName)
+        {
+            if (_manager == null)
+                throw new TransportException(_address.Uri, "The namespace manager is not available");
+
+            var description = new QueueDescription(queueName)
+            {
+                DefaultMessageTimeToLive = _address.DefaultMessageTimeToLive,
+                EnableBatchedOperations = _address.EnableBatchOperations,
+                LockDuration = _address.LockDuration,
+                MaxDeliveryCount = _address.MaxDeliveryCount,
+            };
+
+            try
+            {
+                _manager.CreateQueue(description);
+            }
+            catch (MessagingEntityAlreadyExistsException)
+            {
+            }
+        }
+
+        public void CreateTopic(string topicName)
+        {
+            if (_manager == null)
+                throw new TransportException(_address.Uri, "The namespace manager is not available");
+
+            var description = new TopicDescription(topicName)
+            {
+                DefaultMessageTimeToLive = _address.DefaultMessageTimeToLive,
+                EnableBatchedOperations = _address.EnableBatchOperations,
+            };
+
+            try
+            {
+                _manager.CreateTopic(description);
+            }
+            catch (MessagingEntityAlreadyExistsException ex)
+            {
+            }
         }
     }
 }

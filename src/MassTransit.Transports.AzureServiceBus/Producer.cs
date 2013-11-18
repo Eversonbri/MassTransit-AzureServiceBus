@@ -40,14 +40,14 @@ namespace MassTransit.Transports.AzureServiceBus
             {
                 if (_address.IsQueue)
                 {
-                    CreateQueue(connection.NamespaceManager, _address.QueueName);
+                    connection.CreateQueue(_address.QueueName);
                     QueueClient queueClient = connection.MessagingFactory.CreateQueueClient(_address.QueueName,
                         ReceiveMode.PeekLock);
                     _queueClient = queueClient;
                 }
                 else if (_address.IsTopic)
                 {
-                    CreateTopic(connection.NamespaceManager, _address.TopicName);
+                    connection.CreateTopic(_address.TopicName);
                     TopicClient queueClient = connection.MessagingFactory.CreateTopicClient(_address.TopicName);
 
                     _topicClient = queueClient;
@@ -105,30 +105,6 @@ namespace MassTransit.Transports.AzureServiceBus
 
                 throw new InvalidConnectionException(_address.Uri, "No connection to Azure Service Bus Host");
             }
-        }
-
-        void CreateQueue(NamespaceManager manager, string queueName)
-        {
-            var description = new QueueDescription(queueName)
-                {
-                    DefaultMessageTimeToLive = _address.DefaultMessageTimeToLive,
-                    EnableBatchedOperations = _address.EnableBatchOperations,
-                    LockDuration = _address.LockDuration,
-                    MaxDeliveryCount = _address.MaxDeliveryCount,
-                };
-
-            manager.CreateQueue(description);
-        }
-
-        void CreateTopic(NamespaceManager manager, string topicName)
-        {
-            var description = new TopicDescription(topicName)
-                {
-                    DefaultMessageTimeToLive = _address.DefaultMessageTimeToLive,
-                    EnableBatchedOperations = _address.EnableBatchOperations,
-                };
-
-            manager.CreateTopic(description);
         }
     }
 }
