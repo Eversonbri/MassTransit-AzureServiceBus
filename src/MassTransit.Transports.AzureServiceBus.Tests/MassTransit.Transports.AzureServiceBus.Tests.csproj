@@ -35,8 +35,9 @@
     <NoWarn>1685</NoWarn>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="log4net">
-      <HintPath>..\packages\log4net.2.0.2\lib\net40-full\log4net.dll</HintPath>
+    <Reference Include="log4net, Version=1.2.11.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\log4net.2.0.0\lib\net40-full\log4net.dll</HintPath>
     </Reference>
     <Reference Include="Magnum, Version=2.1.0.0, Culture=neutral, PublicKeyToken=b800c4cfcdeea87b, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -47,6 +48,10 @@
     </Reference>
     <Reference Include="MassTransit">
       <HintPath>..\packages\MassTransit.2.8.0\lib\net40\MassTransit.dll</HintPath>
+    </Reference>
+    <Reference Include="MassTransit.Log4NetIntegration, Version=2.8.0.0, Culture=neutral, PublicKeyToken=b8e0e9f2f1e657fa, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\MassTransit.Log4Net.2.8.0\lib\net40\MassTransit.Log4NetIntegration.dll</HintPath>
     </Reference>
     <Reference Include="MassTransit.TestFramework">
       <HintPath>..\packages\MassTransit.TestFramework.2.8.0\lib\net40\MassTransit.TestFramework.dll</HintPath>
@@ -80,6 +85,7 @@
     <Compile Include="Assumptions\A.cs" />
     <Compile Include="Azure_service_bus_endpoint_spec.cs" />
     <Compile Include="BugTrack\FromMailingList.cs" />
+    <Compile Include="ContextSetup.cs" />
     <Compile Include="Credentials_impl_spec.cs" />
     <Compile Include="Pre_shared_key_credentials_transformations_spec.cs" />
     <Compile Include="Framework\AccountDetails.cs" />
@@ -97,7 +103,7 @@
     <Compile Include="Interop_topic_spec.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="app.config" />
+    <None Include="App.config" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
