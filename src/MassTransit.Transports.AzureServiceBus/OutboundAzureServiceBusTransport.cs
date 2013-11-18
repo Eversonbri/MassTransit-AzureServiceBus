@@ -107,7 +107,7 @@ namespace MassTransit.Transports.AzureServiceBus
                             foreach (var header in context.Headers)
                                 brokeredMessage.Properties.Add(header.Key, header.Value);
 
-                            brokeredMessage.Properties["Content-Type"] = context.ContentType;
+                            brokeredMessage.ContentType = context.ContentType;
 
                             _producer.Send(brokeredMessage);
                         }

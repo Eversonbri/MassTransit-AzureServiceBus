@@ -63,14 +63,9 @@ namespace MassTransit.Transports.AzureServiceBus
 
         public void AddTopicSubscription(string destination, string source)
         {
-            string name = string.Format("{0}{1}", destination, source.GetHashCode());
+            var description = GetTopicSubscriptionDescription(destination, source);
 
-            var description = new SubscriptionDescription(source, name)
-            {
-                ForwardTo = destination,
-            };
-
-            lock(_subscriptions)
+            lock (_subscriptions)
                 _subscriptions.Add(description);
 
             CreateSubscription(description);
@@ -90,13 +85,10 @@ namespace MassTransit.Transports.AzureServiceBus
 
         public void RemoveTopicSubscription(string destination, string source)
         {
-            var description = new SubscriptionDescription(source, source + "--" + destination)
-            {
-                ForwardTo = destination,
-            };
+            var description = GetTopicSubscriptionDescription(destination, source);
 
             lock(_subscriptions)
-                _subscriptions.Add(description);
+                _subscriptions.Remove(description);
 
             try
             {
@@ -106,6 +98,17 @@ namespace MassTransit.Transports.AzureServiceBus
             catch (MessagingEntityNotFoundException ex)
             {
             }
+        }
+
+        static SubscriptionDescription GetTopicSubscriptionDescription(string destination, string source)
+        {
+            string name = string.Format("{0}{1}", destination, source.GetHashCode());
+
+            var description = new SubscriptionDescription(source, name)
+            {
+                ForwardTo = destination,
+            };
+            return description;
         }
 
         void RebindExchanges()
