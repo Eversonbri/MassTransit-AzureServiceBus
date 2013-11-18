@@ -98,7 +98,6 @@
     <Compile Include="Address_spec.cs" />
     <Compile Include="Publish_roundtrip_spec.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Configuration_api_spec.cs" />
     <Compile Include="Message_name_spec.cs" />
     <Compile Include="Interop_topic_spec.cs" />
   </ItemGroup>

@@ -13,15 +13,14 @@
 namespace MassTransit.Transports.AzureServiceBus.Configuration
 {
     using System;
-    using Magnum.Extensions;
 
 
     /// <summary>
-    /// 	DTO with account details that is capable of building a service bus (MT-style)
-    /// 	from the credentials.
+    ///     DTO with account details that is capable of building a service bus (MT-style)
+    ///     from the credentials.
     /// </summary>
     public class Credentials
-        : PreSharedKeyCredentials
+        : SharedAccessSignatureSettings
     {
         public Credentials(string keyName, string key, string ns, string application)
         {
@@ -38,11 +37,13 @@ namespace MassTransit.Transports.AzureServiceBus.Configuration
 
         public Uri BuildUri(string application = null)
         {
-            return
-                new Uri("azure-sb://{0}:{1}@{2}/{3}".FormatWith(KeyName, Uri.EscapeDataString(Key), Namespace, application ?? Application));
+            string uriString = string.Format("azure-sb://{0}:{1}@{2}/{3}", KeyName, Uri.EscapeDataString(Key), Namespace,
+                application ?? Application);
+
+            return new Uri(uriString);
         }
 
-        public PreSharedKeyCredentials WithApplication(string application)
+        public SharedAccessSignatureSettings WithApplication(string application)
         {
             return new Credentials(KeyName, Key, Namespace, application);
         }

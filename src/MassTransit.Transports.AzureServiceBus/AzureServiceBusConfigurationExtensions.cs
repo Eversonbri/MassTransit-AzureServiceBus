@@ -19,7 +19,6 @@ namespace MassTransit.Transports.AzureServiceBus
     using EndpointConfigurators;
     using Exceptions;
     using Pipeline.Configuration;
-    using Util;
 
 
     public static class AzureServiceBusConfigurationExtensions
@@ -38,7 +37,7 @@ namespace MassTransit.Transports.AzureServiceBus
         /// and allows you to configure custom settings.
         /// </summary>
         public static T UseAzureServiceBus<T>(this T configurator,
-            [NotNull] Action<AzureServiceBusTransportFactoryConfigurator> configure)
+             Action<AzureServiceBusTransportFactoryConfigurator> configure)
             where T : EndpointFactoryConfigurator
         {
             if (configure == null)
@@ -53,41 +52,6 @@ namespace MassTransit.Transports.AzureServiceBus
             configurator.UseJsonSerializer();
 
             return configurator;
-        }
-
-        /// <summary>
-        /// Specifies that MT should be using AppFabric ServiceBus Queues to receive messages and specifies the
-        /// uri by means of its components.
-        /// </summary>
-        public static void ReceiveFromComponents<T>(this T configurator,
-            [NotNull] string issuerOrUsername,
-            [NotNull] string defaultKeyOrPassword,
-            [NotNull] string serviceBusNamespace,
-            [NotNull] string application)
-            where T : ServiceBusConfigurator
-        {
-            if (issuerOrUsername == null)
-                throw new ArgumentNullException("issuerOrUsername");
-            if (defaultKeyOrPassword == null)
-                throw new ArgumentNullException("defaultKeyOrPassword");
-            if (serviceBusNamespace == null)
-                throw new ArgumentNullException("serviceBusNamespace");
-            if (application == null)
-                throw new ArgumentNullException("application");
-            var credentials = new Credentials(issuerOrUsername, defaultKeyOrPassword, serviceBusNamespace, application);
-            configurator.ReceiveFrom(credentials.BuildUri());
-        }
-
-        /// <summary>
-        /// Configure MassTransit to consume from Azure Service Bus.
-        /// </summary>
-        public static void ReceiveFromComponents<T>(this T configurator,
-            [NotNull] PreSharedKeyCredentials creds)
-            where T : ServiceBusConfigurator
-        {
-            if (creds == null)
-                throw new ArgumentNullException("creds");
-            configurator.ReceiveFrom(creds.BuildUri());
         }
 
         /// <summary>

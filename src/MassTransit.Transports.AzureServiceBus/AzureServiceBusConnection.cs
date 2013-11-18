@@ -1,4 +1,4 @@
-// Copyright 2012 Henrik Feldt
+// Copyright 2012 Henrik Feldt, Chris Patterson, et. al.
 //  
 // Licensed under the Apache License, Version 2.0 (the "License"); you may not use 
 // this file except in compliance with the License. You may obtain a copy of the 
@@ -16,23 +16,33 @@ namespace MassTransit.Transports.AzureServiceBus
     using Microsoft.ServiceBus.Messaging;
 
 
+    /// <summary>
+    /// A connection for the Azure Service Bus
+    /// </summary>
     public interface AzureServiceBusConnection :
         Connection
     {
         /// <summary>
-        /// The messaging factory for the connection
+        ///     The messaging factory for the connection
         /// </summary>
         MessagingFactory MessagingFactory { get; }
 
         /// <summary>
-        /// The namespace manager for the connection
+        ///     The namespace manager for the connection
         /// </summary>
         NamespaceManager NamespaceManager { get; }
 
 
+        /// <summary>
+        ///     Create a topic using the connection settings
+        /// </summary>
+        /// <param name="topicName"></param>
         void CreateTopic(string topicName);
 
-
+        /// <summary>
+        ///     Create a queue using the connection settings
+        /// </summary>
+        /// <param name="queueName"></param>
         void CreateQueue(string queueName);
     }
 }

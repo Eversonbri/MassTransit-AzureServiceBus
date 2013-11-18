@@ -20,29 +20,27 @@ namespace MassTransit.Transports.AzureServiceBus
     using Context;
     using Logging;
     using Microsoft.ServiceBus.Messaging;
-    using Util;
 
 
     /// <summary>
-    /// Inbound transport implementation for Azure Service Bus.
+    ///     Inbound transport implementation for Azure Service Bus.
     /// </summary>
     public class InboundAzureServiceBusTransport :
         IInboundTransport
     {
-        static readonly ILog _logger = Logger.Get(typeof(InboundAzureServiceBusTransport));
+        static readonly ILog _logger = Logger.Get<InboundAzureServiceBusTransport>();
         readonly IAzureServiceBusEndpointAddress _address;
         readonly ConnectionHandler<AzureServiceBusConnection> _connectionHandler;
         readonly IMessageNameFormatter _formatter;
         readonly IInboundSettings _inboundSettings;
-        AzureServiceBusConsumer _consumer;
-
+        Consumer _consumer;
         bool _disposed;
         Publisher _publisher;
 
-        public InboundAzureServiceBusTransport([NotNull] IAzureServiceBusEndpointAddress address,
-            [NotNull] ConnectionHandler<AzureServiceBusConnection> connectionHandler,
-            [CanBeNull] IMessageNameFormatter formatter = null,
-            [CanBeNull] IInboundSettings inboundSettings = null)
+        public InboundAzureServiceBusTransport(IAzureServiceBusEndpointAddress address,
+            ConnectionHandler<AzureServiceBusConnection> connectionHandler,
+            IMessageNameFormatter formatter = null,
+            IInboundSettings inboundSettings = null)
         {
             if (address == null)
                 throw new ArgumentNullException("address");
@@ -52,13 +50,13 @@ namespace MassTransit.Transports.AzureServiceBus
             _address = address;
             _connectionHandler = connectionHandler;
             _formatter = formatter ?? new AzureServiceBusMessageNameFormatter();
-            _inboundSettings = inboundSettings; 
+            _inboundSettings = inboundSettings;
 
             _logger.DebugFormat("created new inbound transport for '{0}'", address);
         }
 
         /// <summary>
-        /// The formatter for message types
+        ///     The formatter for message types
         /// </summary>
         public IMessageNameFormatter MessageNameFormatter
         {
@@ -183,7 +181,7 @@ namespace MassTransit.Transports.AzureServiceBus
             if (_consumer != null)
                 return;
 
-            _consumer = new AzureServiceBusConsumer(_address, _inboundSettings);
+            _consumer = new Consumer(_address, _inboundSettings);
 
             _connectionHandler.AddBinding(_consumer);
         }

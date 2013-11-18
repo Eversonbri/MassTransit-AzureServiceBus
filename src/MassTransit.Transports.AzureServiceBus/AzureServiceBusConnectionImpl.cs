@@ -40,8 +40,8 @@ namespace MassTransit.Transports.AzureServiceBus
         /// <summary>
         ///     A connection is stored per connection string
         /// </summary>
-        /// <param topicName="address">The address for the connection</param>
-        /// <param topicName="tokenProvider"></param>
+        /// <param name="address"></param>
+        /// <param name="tokenProvider"></param>
         /// <exception cref="ArgumentNullException"></exception>
         public AzureServiceBusConnectionImpl(IAzureServiceBusEndpointAddress address, TokenProvider tokenProvider)
         {

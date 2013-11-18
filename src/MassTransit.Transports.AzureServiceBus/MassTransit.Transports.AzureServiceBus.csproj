@@ -61,7 +61,7 @@
   <ItemGroup>
     <Compile Include="AzureServiceBusConfigurationExtensions.cs" />
     <Compile Include="AzureServiceBusConnection.cs" />
-    <Compile Include="AzureServiceBusConsumer.cs" />
+    <Compile Include="Consumer.cs" />
     <Compile Include="Configuration\AzureServiceBusSettings.cs" />
     <Compile Include="Configuration\Builders\AzureServiceBusTransportFactoryBuilder.cs" />
     <Compile Include="Configuration\Builders\AzureServiceBusTransportFactoryBuilderImpl.cs" />
@@ -77,7 +77,7 @@
     <Compile Include="Configuration\Credentials.cs" />
     <Compile Include="Configuration\IInboundSettings.cs" />
     <Compile Include="Configuration\IOutboundSettings.cs" />
-    <Compile Include="Configuration\PreSharedKeyCredentials.cs" />
+    <Compile Include="Configuration\SharedAccessSignatureSettings.cs" />
     <Compile Include="Configuration\InboundSettings.cs" />
     <Compile Include="Configuration\PublishEndpointInterceptor.cs" />
     <Compile Include="Configuration\PublishEndpointSinkLocator.cs" />

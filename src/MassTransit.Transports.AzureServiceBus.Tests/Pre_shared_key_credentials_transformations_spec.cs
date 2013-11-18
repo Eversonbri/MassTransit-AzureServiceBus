@@ -22,13 +22,13 @@ namespace MassTransit.Transports.AzureServiceBus.Tests
 	public class Pre_shared_key_credentials_transformations_spec
 	{
 		// adding your own? Add one of them to the factory
-		static PreSharedKeyCredentials[] Implementations = {
+		static SharedAccessSignatureSettings[] Implementations = {
 			new AccountDetails(),
 			new Credentials("owner", "key", "ns", "app1"),
 		};
 
 		[Test, TestCaseSource("Implementations")]
-		public void can_build_uri_different_app(PreSharedKeyCredentials impl)
+		public void can_build_uri_different_app(SharedAccessSignatureSettings impl)
 		{
 			var first = impl.BuildUri("app2");
 			var second = FormatUri("app2");
@@ -37,7 +37,7 @@ namespace MassTransit.Transports.AzureServiceBus.Tests
 
 		[Test, TestCaseSource("Implementations")]
 		public void can_create_new_configuration_instance_with_app2(
-			PreSharedKeyCredentials impl)
+			SharedAccessSignatureSettings impl)
 		{
 			var credentials = impl.WithApplication("app3");
 			Assert.AreEqual(credentials.Application, "app3");

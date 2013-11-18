@@ -36,7 +36,7 @@ namespace MassTransit.Transports.AzureServiceBus
         /// <summary>
         /// 	c'tor
         /// </summary>
-        public OutboundAzureServiceBusTransport([NotNull] IAzureServiceBusEndpointAddress address, [NotNull] ConnectionHandler<AzureServiceBusConnection> connectionHandler, IOutboundSettings outboundSettings)
+        public OutboundAzureServiceBusTransport( IAzureServiceBusEndpointAddress address,  ConnectionHandler<AzureServiceBusConnection> connectionHandler, IOutboundSettings outboundSettings)
         {
             if (address == null)
                 throw new ArgumentNullException("address");
