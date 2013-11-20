@@ -14,7 +14,6 @@
 
 using Magnum.Extensions;
 using MassTransit.Transports.AzureServiceBus.Tests.Framework;
-using Moq;
 
 namespace MassTransit.Transports.AzureServiceBus.Tests
 {

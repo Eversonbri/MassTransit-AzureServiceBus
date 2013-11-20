@@ -11,10 +11,6 @@ end
 task :ensure_account_details do
   targ = 'src/MassTransit.Transports.AzureServiceBus.Tests/Framework/AccountDetails.cs'
   unless File.exists? targ then ; FileUtils.cp 'build_support/AccountDetails.cs', targ ; end
-  targ = 'src/MassTransit.Async/AccountDetails.fs'
-  unless File.exists? targ then ; FileUtils.cp 'build_support/AccountDetails.fs', targ ; end
-  targ = 'src/PerformanceTesting/MassTransit.AzurePerformance/ServiceConfiguration.Cloud.cscfg'
-  unless File.exists? targ then ; FileUtils.cp 'build_support/ServiceConfiguration.Cloud.cscfg', targ ; end
 end
 
 desc "Update the common version information for the build. You can call this task without building."
@@ -26,7 +22,7 @@ assemblyinfo :global_version => [:versioning] do |asm|
   asm.custom_attributes :AssemblyInformationalVersion => "#{BUILD_VERSION}",
     :ComVisibleAttribute => false,
     :CLSCompliantAttribute => false
-  asm.copyright = 'Henrik Feldt 2012'
+  asm.copyright = 'Henrik Feldt, Chris Patterson 2013'
   asm.output_file = 'src/SolutionVersion.cs'
   asm.namespaces "System", "System.Reflection", "System.Runtime.InteropServices", "System.Security"
 end
@@ -38,6 +34,11 @@ task :ensure_packages do
       puts (res.inspect) unless ok
     end
   end
+    
+  sh %Q[src/.nuget/NuGet.exe install "src/.nuget/packages.config" -o "src/packages"] do |ok, res| 
+    puts (res.inspect) unless ok
+  end
+
 end
 
 desc "Compile Solution"
@@ -81,16 +82,17 @@ nuspec :nuspec => ['build/nuspec', :nuspec_copy] do |nuspec|
   conf_assert
   nuspec.id = "MassTransit.AzureServiceBus"
   nuspec.version = NUGET_VERSION
-  nuspec.authors = "Henrik Feldt, MPS Broadband"
-  nuspec.owners = "Henrik Feldt"
+  nuspec.authors = "Henrik Feldt, MPS Broadband, Chris Patterson"
+  nuspec.owners = "phatboyg"
   nuspec.description = "MassTransit transport library for Azure ServiceBus."
   nuspec.title = "MassTransit Azure ServiceBus Transport"
   nuspec.projectUrl = 'https://github.com/MassTransit/MassTransit-AzureServiceBus'
   nuspec.language = "en-GB"
   nuspec.licenseUrl = "http://www.apache.org/licenses/LICENSE-2.0"
   nuspec.requireLicenseAcceptance = "true"
-  nuspec.dependency "MassTransit", "2.7.3"
-  nuspec.dependency "WindowsAzure.ServiceBus", "1.8.0"
+  nuspec.dependency "MassTransit", "2.9.0"
+  nuspec.dependency "WindowsAzure.ServiceBus", "2.2.1.1"
+  nuspec.dependency "Microsoft.WindowsAzure.ConfigurationManager", "2.0.2.0"
   nuspec.output_file = 'build/nuspec/MassTransit.AzureServiceBus.nuspec'
 end
 
