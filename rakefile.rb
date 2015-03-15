@@ -76,17 +76,17 @@ nuspec :nuspec => ['build/nuspec', :nuspec_copy] do |nuspec|
   conf_assert
   nuspec.id = "MassTransit.AzureServiceBus"
   nuspec.version = NUGET_VERSION
-  nuspec.authors = "Henrik Feldt, MPS Broadband, Chris Patterson"
-  nuspec.owners = "phatboyg"
+  nuspec.authors = ["Henrik Feldt", "MPS Broadband", "Chris Patterson"]
+  nuspec.owners = ["phatboyg"]
   nuspec.description = "MassTransit transport library for Azure ServiceBus."
   nuspec.title = "MassTransit Azure ServiceBus Transport"
-  nuspec.projectUrl = 'https://github.com/MassTransit/MassTransit-AzureServiceBus'
+  nuspec.project_url = "https://github.com/MassTransit/MassTransit-AzureServiceBus"
   nuspec.language = "en-GB"
-  nuspec.licenseUrl = "http://www.apache.org/licenses/LICENSE-2.0"
-  nuspec.requireLicenseAcceptance = "true"
-  nuspec.dependency "MassTransit", "2.9.0"
-  nuspec.dependency "WindowsAzure.ServiceBus", "2.2.1.1"
-  nuspec.dependency "Microsoft.WindowsAzure.ConfigurationManager", "2.0.2.0"
+  nuspec.license_url = "http://www.apache.org/licenses/LICENSE-2.0"
+  nuspec.dependency "MassTransit", "2.9.9"
+  nuspec.dependency "WindowsAzure.ServiceBus", "2.6.2"
+  nuspec.dependency "Microsoft.WindowsAzure.ConfigurationManager", "2.0.3"
+  nuspec.dependency "Newtonsoft.Json", "6.02"
   nuspec.output_file = 'build/nuspec/MassTransit.AzureServiceBus.nuspec'
 end
 
@@ -97,7 +97,7 @@ nugetpack :nuget => ['build/nuget', :nuspec] do |nuget|
   conf_assert
   nuget.command     = 'src/.nuget/NuGet.exe'
   nuget.nuspec      = 'build/nuspec/MassTransit.AzureServiceBus.nuspec'
-  nuget.output      = 'build/nuget'
+  nuget.output_directory = 'build/nuget'
 end
 
 desc "publishes (pushes) the nuget package 'MassTransit.AzureServiceBus'"
