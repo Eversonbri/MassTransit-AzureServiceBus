@@ -28,14 +28,8 @@ assemblyinfo :global_version => [:versioning] do |asm|
 end
 
 desc "Ensure that all NuGet packages are here"
-task :ensure_packages do
-  Dir.glob("./src/**/packages.config") do |cfg|
-    sh %Q[src/.nuget/NuGet.exe install "#{cfg}" -o "src/packages"] do |ok, res|
-      puts (res.inspect) unless ok
-    end
-  end
-    
-  sh %Q[src/.nuget/NuGet.exe install "src/.nuget/packages.config" -o "src/packages"] do |ok, res| 
+task :ensure_packages do    
+  sh %Q[src/.nuget/NuGet.exe restore "src/MassTransit-AzureServiceBus.sln"] do |ok, res| 
     puts (res.inspect) unless ok
   end
 
