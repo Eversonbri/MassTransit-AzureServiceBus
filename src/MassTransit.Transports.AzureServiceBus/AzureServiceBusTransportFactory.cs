@@ -211,7 +211,7 @@ namespace MassTransit.Transports.AzureServiceBus
             return cache.Get(ns, _ =>
                 {
                     if (_log.IsDebugEnabled)
-                        _log.DebugFormat("Creating RabbitMQ connection: {0}", address.Uri);
+                        _log.DebugFormat("Creating Azure Service Bus connection: {0}", address.Uri);
 
                     ConnectionSettingsBuilder builder = _connectionSettingsBuilders.Get(ns, __ =>
                         {
