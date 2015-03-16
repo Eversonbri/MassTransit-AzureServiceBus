@@ -156,6 +156,9 @@ namespace MassTransit.Transports.AzureServiceBus
                     foreach (Type type in messageType.GetMessageTypes().Skip(1))
                     {
                         MessageName interfaceName = messageNameFormatter.GetMessageName(type);
+                        
+                        // Create topics for inherited types before trying to setup the subscription
+                        _publisher.CreateTopic(interfaceName.Name.ToString());
 
                         _publisher.AddTopicSubscription(interfaceName.ToString(), messageName.ToString());
                         messageTypes.Add(type);
