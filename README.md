@@ -12,7 +12,7 @@ https://www.windowsazure.com/en-us/develop/net/how-to-guides/service-bus-topics/
 using (ServiceBusFactory.New(sbc =>
 	{
 		sbc.ReceiveFrom(
-			"azure-sb://owner:bjOAWQJalkmd9LKas0lsdklkdw4mAHwKZUJ1jKwTLdc=@myNamespace/my-application"
+			"sb://owner:bjOAWQJalkmd9LKas0lsdklkdw4mAHwKZUJ1jKwTLdc=@myNamespace/my-application"
 			);
 		sbc.UseAzureServiceBus();
 		sbc.UseAzureServiceBusRouting();

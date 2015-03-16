@@ -37,7 +37,7 @@ namespace MassTransit.Transports.AzureServiceBus.Configuration
 
         public Uri BuildUri(string application = null)
         {
-            string uriString = string.Format("azure-sb://{0}:{1}@{2}/{3}", KeyName, Uri.EscapeDataString(Key), Namespace,
+            string uriString = string.Format("sb://{0}:{1}@{2}/{3}", KeyName, Uri.EscapeDataString(Key), Namespace,
                 application ?? Application);
 
             return new Uri(uriString);

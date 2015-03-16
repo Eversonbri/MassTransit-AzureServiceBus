@@ -52,7 +52,7 @@ namespace MassTransit.Transports.AzureServiceBus
             if (addressType == AddressType.Topic)
                 suffix = "?topic=true";
 
-            _friendlyUri = new Uri(string.Format("azure-sb://{0}/{1}{2}",
+            _friendlyUri = new Uri(string.Format("sb://{0}/{1}{2}",
                 ns,
                 queueOrTopicName,
                 suffix));
