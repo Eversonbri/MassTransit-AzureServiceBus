@@ -31,11 +31,11 @@ namespace MassTransit.Transports.AzureServiceBus.Tests.BugTrack
 		[SetUp]
 		public void SetUp()
 		{
-			var hostReceiveFrom = getEndpointUrl("host");
-			var publisherReceiveFrom = getEndpointUrl("publisher");
+			var hostReceiveFrom = GetEndpointUrl("host");
+			var publisherReceiveFrom = GetEndpointUrl("publisher");
 
-			configurePublisher(publisherReceiveFrom, hostReceiveFrom);
-			configureHost(hostReceiveFrom);
+			ConfigurePublisher(publisherReceiveFrom, hostReceiveFrom);
+			ConfigureHost(hostReceiveFrom);
 
 			_messages = new List<TestMessage>();
 		}
@@ -53,40 +53,48 @@ namespace MassTransit.Transports.AzureServiceBus.Tests.BugTrack
 			Assert.AreEqual(1, _messages.Count);
 		}
 
-		private void configureHost(Uri hostUrl)
+		private void ConfigureHost(Uri hostUrl)
 		{
-			_host = ServiceBusFactory.New(config =>
-				{
-					config.SetPurgeOnStartup(true);
-				config.ReceiveFrom(hostUrl);
-				config.UseAzureServiceBus();
-				config.UseAzureServiceBusRouting();
-					config.Subscribe(
-						s => s.Handler<TestMessage>(msg => _messages.Add(msg))
-						);
-				});
+		    _host = ServiceBusFactory.New(config =>
+		    {
+		        config.SetPurgeOnStartup(true);
+		        config.UseAzureServiceBus(a => a.ConfigureNamespace(AccountDetails.Namespace, h =>
+		        {
+		            h.SetKeyName(AccountDetails.KeyName);
+		            h.SetKey(AccountDetails.Key);
+		        }));
+                config.UseAzureServiceBusRouting();
+                config.ReceiveFrom(hostUrl);
+		        config.Subscribe(
+		            s => s.Handler<TestMessage>(msg => _messages.Add(msg))
+		            );
+		    });
 
 			var bus = new RoutingConfigurator().Create(_host);
 			bus.Start(_host);
 		}
 
-		private void configurePublisher(Uri receiveFrom, Uri hostUrl)
+		private void ConfigurePublisher(Uri receiveFrom, Uri hostUrl)
 		{
 			//var configurator = new RoutingConfigurator();
 			//configurator.Route<TestMessage>().To(hostUrl);
 
 			_publisher = ServiceBusFactory.New(config =>
 				{
-					config.ReceiveFrom(receiveFrom);
-					config.UseAzureServiceBus();
-					config.UseAzureServiceBusRouting();
+                    config.UseAzureServiceBus(a => a.ConfigureNamespace(AccountDetails.Namespace, h =>
+                    {
+                        h.SetKeyName(AccountDetails.KeyName);
+                        h.SetKey(AccountDetails.Key);
+                    }));
+                    config.UseAzureServiceBusRouting();
+                    config.ReceiveFrom(receiveFrom);
 				});
 
 			//var bus = configurator.Create(_publisher);
 			//bus.Start(_publisher);
 		}
 
-		private static Uri getEndpointUrl(string applicationName)
+		private static Uri GetEndpointUrl(string applicationName)
 		{
 			var details = new AccountDetails();
 			return details.BuildUri(applicationName);
