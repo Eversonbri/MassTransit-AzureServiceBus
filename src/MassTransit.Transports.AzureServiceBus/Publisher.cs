@@ -10,6 +10,9 @@
 // under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR 
 // CONDITIONS OF ANY KIND, either express or implied. See the License for the 
 // specific language governing permissions and limitations under the License.
+
+using System.Text;
+
 namespace MassTransit.Transports.AzureServiceBus
 {
     using System.Collections.Generic;
@@ -102,13 +105,24 @@ namespace MassTransit.Transports.AzureServiceBus
 
         static SubscriptionDescription GetTopicSubscriptionDescription(string destination, string source)
         {
-            string name = string.Format("{0}{1}", destination, source.GetHashCode());
+            string name = Shorten(destination, source, 50);
 
             var description = new SubscriptionDescription(source, name)
             {
                 ForwardTo = destination,
             };
             return description;
+        }
+
+        private static string Shorten(string destination, string source, int maxlength)
+        {
+            var hash = source.GetHashCode().ToString();
+
+            if (destination.Length + hash.Length <= maxlength)
+                return destination + hash;
+
+            var shortPath = destination.Substring(0, maxlength - hash.Length) + hash;
+            return shortPath;
         }
 
         void RebindExchanges()
