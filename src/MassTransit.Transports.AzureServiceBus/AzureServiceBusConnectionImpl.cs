@@ -139,6 +139,9 @@ namespace MassTransit.Transports.AzureServiceBus
             if (_manager == null)
                 throw new TransportException(_address.Uri, "The namespace manager is not available");
 
+            if (_manager.QueueExists(queueName))
+                return;
+
             var description = new QueueDescription(queueName)
             {
                 DefaultMessageTimeToLive = _address.DefaultMessageTimeToLive,
@@ -160,6 +163,9 @@ namespace MassTransit.Transports.AzureServiceBus
         {
             if (_manager == null)
                 throw new TransportException(_address.Uri, "The namespace manager is not available");
+
+            if (_manager.TopicExists(topicName))
+                return;
 
             var description = new TopicDescription(topicName)
             {
