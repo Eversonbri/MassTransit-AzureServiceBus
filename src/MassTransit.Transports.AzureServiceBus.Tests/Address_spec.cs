@@ -111,11 +111,11 @@ namespace MassTransit.Transports.AzureServiceBus.Tests
 			return new Uri(string.Format("azure-sb://owner:{0}@{1}{2}/my-application",
                 Uri.EscapeDataString(AccountDetails.Key), AccountDetails.Namespace, extraHost));
         }
-
+         
         [Test]
-		public void the_two_endpoints_namespace_manager_endpoints_equal()
+		public void address_is_subset_of_extended_address()
 		{
-			Assert.AreEqual(_address.Uri.Host,_addressExtended.Uri.Host);
+            Assert.IsTrue(_addressExtended.Uri.Host.StartsWith(_address.Uri.Host));
 		}
 	}
 
