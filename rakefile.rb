@@ -49,8 +49,8 @@ nunit :test => [:ensure_account_details, :release, :compile] do |n|
   asms = Dir.glob("#{File.dirname(__FILE__)}/src/MassTransit.*.Tests/bin/#{CONFIGURATION}/*.Tests.dll")
   puts "Running nunit with assemblies: #{asms.inspect}"
   n.command = Dir.glob("#{File.dirname(__FILE__)}/src/packages/NUnit*/Tools/nunit-console.exe").first
-  n.assemblies = asms
-  n.options '/framework=net-4.0'
+  n.assemblies = asms 
+  n.parameters = ['/framework=net-4.0']
 end
 
 desc "Compile Solution, Run Tests"
