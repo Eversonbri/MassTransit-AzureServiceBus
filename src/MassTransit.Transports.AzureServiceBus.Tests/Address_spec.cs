@@ -80,7 +80,7 @@ namespace MassTransit.Transports.AzureServiceBus.Tests
         [Test]
 		public void rebuilt_uri_should_be_correct()
 		{
-			var uriWithoutCreds = new Uri(string.Format("sb://{0}/{1}", 
+			var uriWithoutCreds = new Uri(string.Format("azure-sb://{0}/{1}", 
 				AccountDetails.Namespace, "my-application"));
 
 			Assert.AreEqual(_address.Uri,uriWithoutCreds);
@@ -108,7 +108,7 @@ namespace MassTransit.Transports.AzureServiceBus.Tests
 
 		Uri GetUri(string extraHost)
 		{
-			return new Uri(string.Format("sb://owner:{0}@{1}{2}/my-application",
+			return new Uri(string.Format("azure-sb://owner:{0}@{1}{2}/my-application",
                 Uri.EscapeDataString(AccountDetails.Key), AccountDetails.Namespace, extraHost));
         }
 
@@ -128,9 +128,9 @@ namespace MassTransit.Transports.AzureServiceBus.Tests
 		[SetUp]
 		public void two_bad_uris()
 		{
-			_faulty_app = new Uri(string.Format("sb://owner:{0}@{1}/my-application/but_then_another_too",
+			_faulty_app = new Uri(string.Format("azure-sb://owner:{0}@{1}/my-application/but_then_another_too",
                 Uri.EscapeDataString(AccountDetails.Key), AccountDetails.Namespace));
-            _missing_creds = new Uri(string.Format("sb://owner-pass@lalala.servicebus.windows.net/app"));
+            _missing_creds = new Uri(string.Format("azure-sb://owner-pass@lalala.servicebus.windows.net/app"));
 		}
 
 //		[Test]

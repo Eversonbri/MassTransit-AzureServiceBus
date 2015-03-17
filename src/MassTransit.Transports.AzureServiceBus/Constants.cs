@@ -21,6 +21,6 @@ namespace MassTransit.Transports.AzureServiceBus
         /// <summary>
         /// Used by the transport factory for the scheme
         /// </summary>
-        public const string Scheme = "sb";
+        public const string Scheme = "azure-sb";
     }
 }
