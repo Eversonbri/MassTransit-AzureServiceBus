@@ -93,7 +93,7 @@ end
 directory 'build/nuget'
 
 desc "nuget pack 'MassTransit.AzureServiceBus'"
-nugetpack :nuget => ['build/nuget', :nuspec] do |nuget|
+nugetpack :nuget => ['build/nuget', :release, :nuspec] do |nuget|
   conf_assert
   nuget.command     = 'src/.nuget/NuGet.exe'
   nuget.nuspec      = 'build/nuspec/MassTransit.AzureServiceBus.nuspec'
@@ -101,7 +101,7 @@ nugetpack :nuget => ['build/nuget', :nuspec] do |nuget|
 end
 
 desc "publishes (pushes) the nuget package 'MassTransit.AzureServiceBus'"
-nugetpush :nuget_push [:versioning] do |nuget|
+nugetpush :nuget_push => [:release, :versioning] do |nuget|
   nuget.command = 'src/.nuget/NuGet.exe'
   nuget.package = File.join("build/nuget", 'MassTransit.AzureServiceBus' + "." + BUILD_VERSION + '.nupkg')
 end
