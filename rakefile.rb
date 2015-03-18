@@ -39,7 +39,7 @@ desc "Compile Solution"
 msbuild :compile => [:ensure_packages, :ensure_account_details, :global_version] do |msb|
   msb.solution = 'src/MassTransit-AzureServiceBus.sln'
   msb.properties :Configuration => CONFIGURATION
-  msb.targets    :Build
+  msb.targets    :Rebuild
   msb.verbosity = "minimal"
 end
 
