@@ -42,7 +42,7 @@ namespace MassTransit.Transports.AzureServiceBus.Tests
     }
 
 
-    [TestFixture]
+    [TestFixture, Explicit]
     public class When_publishing_correlated_interface
     {
         [TestFixtureSetUp]

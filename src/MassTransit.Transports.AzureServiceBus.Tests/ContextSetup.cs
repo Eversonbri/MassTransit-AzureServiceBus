@@ -13,6 +13,7 @@
 namespace MassTransit.Transports.AzureServiceBus.Tests
 {
     using Log4NetIntegration.Logging;
+    using Microsoft.ServiceBus;
     using NUnit.Framework;
 
 
@@ -22,6 +23,8 @@ namespace MassTransit.Transports.AzureServiceBus.Tests
         [SetUp]
         public void Setup()
         {
+            ServiceBusEnvironment.SystemConnectivity.Mode = ConnectivityMode.Http;
+
             Log4NetLogger.Use("test.log4net.xml");
         }
     }
