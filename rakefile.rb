@@ -101,13 +101,13 @@ nugetpack :nuget => ['build/nuget', :nuspec] do |nuget|
 end
 
 desc "publishes (pushes) the nuget package 'MassTransit.AzureServiceBus'"
-nugetpush :nuget_push do |nuget|
+nugetpush :nuget_push [:versioning] do |nuget|
   nuget.command = 'src/.nuget/NuGet.exe'
   nuget.package = File.join("build/nuget", 'MassTransit.AzureServiceBus' + "." + BUILD_VERSION + '.nupkg')
 end
 
 desc "publish nugets! (doesn't build)"
-task :publish => [:everything, :nuget_push]
+task :publish => [:verify, :default, :git, :nuget_push]
 
 task :verify do
   changed_files = `git diff --cached --name-only`.split("\n") + `git diff --name-only`.split("\n")
