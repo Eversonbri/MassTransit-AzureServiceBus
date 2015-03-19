@@ -86,7 +86,7 @@ nuspec :nuspec => ['build/nuspec', :nuspec_copy] do |nuspec|
   nuspec.dependency "MassTransit", "2.9.9"
   nuspec.dependency "WindowsAzure.ServiceBus", "2.6.2"
   nuspec.dependency "Microsoft.WindowsAzure.ConfigurationManager", "2.0.3"
-  nuspec.dependency "Newtonsoft.Json", "6.02"
+  nuspec.dependency "Newtonsoft.Json", "6.0.6"
   nuspec.output_file = 'build/nuspec/MassTransit.AzureServiceBus.nuspec'
 end
 
